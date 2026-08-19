@@ -299,6 +299,7 @@ const styles = StyleSheet.create({
   center: { position: 'absolute', width: 48, height: 48, borderRadius: 24, overflow: 'hidden', zIndex: 20 },
   centerInner: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 24 },
   segment: { position: 'absolute' },
+  wedge: { position: 'absolute', top: 0, left: 0 },
   labelWrap: {},
   segLabel: { fontSize: 9, fontFamily: FontFamily.number, color: '#fff', textAlign: 'center' },
   centerCircle: { position: 'absolute', width: 44, height: 44, borderRadius: 22, overflow: 'hidden' },
