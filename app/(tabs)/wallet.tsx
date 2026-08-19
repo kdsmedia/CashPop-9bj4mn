@@ -123,7 +123,7 @@ export default function WalletScreen() {
 
               <View style={styles.balanceStats}>
                 <View style={styles.bStat}>
-                  <Text style={styles.bStatLabel}>Total Penghasilan</Text>
+                  <Text style={styles.bStatLabel}>Penghasilan</Text>
                   <Text style={styles.bStatValue}>{formatRupiah(user.totalEarned)}</Text>
                 </View>
                 <View style={styles.bStatDivider} />
@@ -151,7 +151,7 @@ export default function WalletScreen() {
                     value: formatRupiah(user.balance),
                   },
                   {
-                    label: 'Aktivitas (350× total)',
+                    label: 'Aktivitas syarat',
                     done: user.totalAdsWatched >= 350,
                     value: `${user.totalAdsWatched}/350`,
                   },
@@ -268,7 +268,7 @@ export default function WalletScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.refTitle}>Kode Referral</Text>
                   <Text style={styles.refCode}>{user.referralCode}</Text>
-                  <Text style={styles.refHint}>Bagikan ke teman · Rp500/referral valid</Text>
+                  <Text style={styles.refHint}>Bagikan ke teman · Rp500/referral</Text>
                 </View>
                 <TouchableOpacity
                   style={styles.copyBtn}
