@@ -26,7 +26,6 @@ interface BoosterRentModalProps {
 }
 
 function BoosterRentModal({ booster, visible, onClose, onRent, balance }: BoosterRentModalProps) {
-  if (!booster) return null;
   const slideAnim = useRef(new Animated.Value(300)).current;
 
   useEffect(() => {
@@ -36,6 +35,8 @@ function BoosterRentModal({ booster, visible, onClose, onRent, balance }: Booste
       slideAnim.setValue(300);
     }
   }, [visible]);
+
+  if (!booster) return null;
 
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose}>

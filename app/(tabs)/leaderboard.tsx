@@ -53,6 +53,41 @@ function RankBadge({ rank }: { rank: number }) {
   );
 }
 
+function LeaderboardListItem({ entry, rank, fadeAnim }: { entry: LeaderboardEntry; rank: number; fadeAnim: Animated.Value }) {
+  const slideIn = useRef(new Animated.Value(40)).current;
+
+  useEffect(() => {
+    Animated.spring(slideIn, { toValue: 0, tension: 60, friction: 9, delay: rank * 50, useNativeDriver: true }).start();
+  }, []);
+
+  return (
+    <Animated.View style={[{ transform: [{ translateY: slideIn }], opacity: fadeAnim }]}>
+      <LinearGradient
+        colors={entry.isCurrentUser ? ['#1A1A4A', '#12124A'] : ['#10102E', '#161640']}
+        style={[styles.listItem, entry.isCurrentUser && styles.listItemCurrent]}
+      >
+        <RankBadge rank={rank} />
+        <View style={[styles.listAvatar, { backgroundColor: entry.isCurrentUser ? Colors.primary + '22' : Colors.bgSurface }]}>
+          <Text style={[styles.listAvatarText, { color: entry.isCurrentUser ? Colors.primary : Colors.textMuted }]}>
+            {entry.name.charAt(0)}
+          </Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.listName, { color: entry.isCurrentUser ? Colors.primary : Colors.textPrimary }]}>
+            {entry.name}
+          </Text>
+          <Text style={styles.listDana}>{entry.danaNumber}</Text>
+        </View>
+        <View style={styles.listEarnedWrap}>
+          <Text style={[styles.listEarned, { color: entry.isCurrentUser ? Colors.primary : Colors.accent }]}>
+            {formatRupiah(entry.totalEarned)}
+          </Text>
+        </View>
+      </LinearGradient>
+    </Animated.View>
+  );
+}
+
 export default function LeaderboardScreen() {
   const { user } = useApp();
   const insets = useSafeAreaInsets();
@@ -147,39 +182,9 @@ export default function LeaderboardScreen() {
 
           {/* Leaderboard List (4-10) */}
           <View style={styles.listSection}>
-            {top10.slice(3).map((entry, idx) => {
-              const rank = idx + 4;
-              const slideIn = useRef(new Animated.Value(40)).current;
-              useEffect(() => {
-                Animated.spring(slideIn, { toValue: 0, tension: 60, friction: 9, delay: rank * 50, useNativeDriver: true }).start();
-              }, []);
-              return (
-                <Animated.View key={entry.id} style={[{ transform: [{ translateY: slideIn }], opacity: fadeAnim }]}>
-                  <LinearGradient
-                    colors={entry.isCurrentUser ? ['#1A1A4A', '#12124A'] : ['#10102E', '#161640']}
-                    style={[styles.listItem, entry.isCurrentUser && styles.listItemCurrent]}
-                  >
-                    <RankBadge rank={rank} />
-                    <View style={[styles.listAvatar, { backgroundColor: entry.isCurrentUser ? Colors.primary + '22' : Colors.bgSurface }]}>
-                      <Text style={[styles.listAvatarText, { color: entry.isCurrentUser ? Colors.primary : Colors.textMuted }]}>
-                        {entry.name.charAt(0)}
-                      </Text>
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={[styles.listName, { color: entry.isCurrentUser ? Colors.primary : Colors.textPrimary }]}>
-                        {entry.name}
-                      </Text>
-                      <Text style={styles.listDana}>{entry.danaNumber}</Text>
-                    </View>
-                    <View style={styles.listEarnedWrap}>
-                      <Text style={[styles.listEarned, { color: entry.isCurrentUser ? Colors.primary : Colors.accent }]}>
-                        {formatRupiah(entry.totalEarned)}
-                      </Text>
-                    </View>
-                  </LinearGradient>
-                </Animated.View>
-              );
-            })}
+            {top10.slice(3).map((entry, idx) => (
+              <LeaderboardListItem key={entry.id} entry={entry} rank={idx + 4} fadeAnim={fadeAnim} />
+            ))}
           </View>
 
           {/* User Position (if not in top 10) */}
