@@ -249,7 +249,7 @@ export default function MiningScreen() {
       {/* Summary Cards */}
       <View style={styles.summaryGrid}>
         {[
-          { label: 'Total Penghasilan', value: formatRupiah(user.totalEarned), icon: 'payments', color: Colors.primary },
+          { label: 'Penghasilan', value: formatRupiah(user.totalEarned), icon: 'payments', color: Colors.primary },
           { label: 'Aktivitas', value: `${user.totalAdsWatched}/350`, icon: 'assignment-turned-in', color: Colors.accent },
           { label: 'Referral', value: `${user.referralCount} orang`, icon: 'group-add', color: Colors.purple },
           { label: 'Streak', value: `${user.checkinStreak} hari`, icon: 'local-fire-department', color: Colors.orange },
