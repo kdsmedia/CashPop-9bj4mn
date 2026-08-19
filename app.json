@@ -55,13 +55,6 @@
         {
           "fonts": []
         }
-      ],
-      [
-        "react-native-google-mobile-ads",
-        {
-          "android_app_id": "ca-app-pub-6881903056221433~3325421892",
-          "ios_app_id": "ca-app-pub-6881903056221433~3325421892"
-        }
       ]
     ],
     "experiments": {

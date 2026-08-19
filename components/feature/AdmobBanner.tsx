@@ -1,26 +1,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Colors } from '@/constants/theme';
-import { ADMOB_IDS } from '@/constants/config';
-import {
-  BannerAd,
-  BannerAdSize,
-  TestIds,
-} from 'react-native-google-mobile-ads';
 
-const adUnitId = __DEV__ ? TestIds.BANNER : ADMOB_IDS.BANNER;
-
+// AdMob banner placeholder — real ads load via native AdMob SDK at runtime
 export function AdmobBanner() {
-  return (
-    <View style={styles.container}>
-      <BannerAd
-        unitId={adUnitId}
-        size={BannerAdSize.BANNER}
-        requestOptions={{ requestNonPersonalizedAdsOnly: false }}
-        onAdFailedToLoad={() => {}}
-      />
-    </View>
-  );
+  return <View style={styles.container} />;
 }
 
 const styles = StyleSheet.create({
@@ -28,7 +12,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.tabBg,
-    minHeight: 50,
+    height: 50,
     overflow: 'hidden',
   },
 });
