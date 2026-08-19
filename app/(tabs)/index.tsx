@@ -7,14 +7,16 @@ import {
   StyleSheet,
   Animated,
   Easing,
+  FlatList,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useApp } from '@/hooks/useApp';
 import { MiningAnimation } from '@/components/feature/MiningAnimation';
-import { Colors, Spacing, Radius, FontSize, FontWeight, FontFamily } from '@/constants/theme';
-import { formatRupiah, formatHashRate, getActiveBoostersFiltered } from '@/services/gameService';
+import { Colors, Spacing, Radius, FontSize, FontFamily } from '@/constants/theme';
+import { formatRupiah, formatHashRate, formatTimestamp, getActiveBoostersFiltered } from '@/services/gameService';
 import { BOOSTERS } from '@/constants/config';
 
 function HashDisplay({ value }: { value: string }) {
@@ -35,8 +37,19 @@ const hStyles = StyleSheet.create({
   char: { fontSize: 11, fontFamily: FontFamily.number, color: Colors.accent },
 });
 
+const HISTORY_ICONS: Record<string, { icon: string; color: string }> = {
+  start: { icon: 'play-circle-filled', color: '#00FF7F' },
+  stop: { icon: 'stop-circle', color: '#FF4757' },
+  reward: { icon: 'stars', color: '#FFD700' },
+  checkin: { icon: 'event-available', color: '#00FF7F' },
+  spin: { icon: 'casino', color: '#8B5CF6' },
+  referral: { icon: 'group-add', color: '#4ECDC4' },
+  booster: { icon: 'bolt', color: '#FF8C42' },
+  withdraw: { icon: 'send', color: '#FF6B9D' },
+};
+
 export default function MiningScreen() {
-  const { user, currentHashRate, currentMultiplier, startMining, stopMining } = useApp();
+  const { user, currentHashRate, currentMultiplier, startMining, stopMining, miningHistory } = useApp();
   const insets = useSafeAreaInsets();
 
   const [hashDisplay, setHashDisplay] = useState('000000000000000000000000');
@@ -45,8 +58,13 @@ export default function MiningScreen() {
   const cardAnim = useRef(new Animated.Value(40)).current;
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Animated values for new history items
+  const [histItemAnims] = useState<Record<string, Animated.Value>>({});
+
   const HEX = '0123456789abcdef';
+  const BINARY = '01';
   const randomHash = () => Array.from({ length: 24 }, () => HEX[Math.floor(Math.random() * 16)]).join('');
+  const randomBinary = () => Array.from({ length: 8 }, () => BINARY[Math.floor(Math.random() * 2)]).join('');
 
   useEffect(() => {
     Animated.parallel([
@@ -79,6 +97,8 @@ export default function MiningScreen() {
     else startMining();
   };
 
+  const reversedHistory = [...miningHistory].reverse();
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: Colors.bg }}
@@ -89,9 +109,12 @@ export default function MiningScreen() {
       <Animated.View style={{ opacity: headerAnim }}>
         <LinearGradient colors={['#0D0D30', '#07071A']} style={[styles.header, { paddingTop: insets.top + 16 }]}>
           <View style={styles.headerRow}>
-            <View>
-              <Text style={styles.appTitle}>CASHPOP</Text>
-              <Text style={styles.danaNum}>{user.danaNumber}</Text>
+            <View style={styles.headerLeft}>
+              <Image source={require('@/assets/images/icon.png')} style={styles.logoSmall} resizeMode="contain" />
+              <View>
+                <Text style={styles.appTitle}>CashPoP</Text>
+                <Text style={styles.danaNum}>{user.danaNumber}</Text>
+              </View>
             </View>
             <View style={styles.balanceBadge}>
               <Text style={styles.balanceLabel}>Saldo</Text>
@@ -164,7 +187,7 @@ export default function MiningScreen() {
                 color={user.miningActive ? '#fff' : '#000'}
               />
               <Text style={[styles.mineBtnText, { color: user.miningActive ? '#fff' : '#000' }]}>
-                {user.miningActive ? 'STOP MINING' : 'START MINING'}
+                {user.miningActive ? 'STOP' : 'START'}
               </Text>
             </LinearGradient>
           </TouchableOpacity>
@@ -197,9 +220,9 @@ export default function MiningScreen() {
       <View style={styles.summaryGrid}>
         {[
           { label: 'Total Penghasilan', value: formatRupiah(user.totalEarned), icon: 'payments', color: Colors.primary },
-          { label: 'Video Ditonton', value: `${user.totalAdsWatched}/350`, icon: 'ondemand-video', color: Colors.accent },
+          { label: 'Aktivitas', value: `${user.totalAdsWatched}/350`, icon: 'ondemand-video', color: Colors.accent },
           { label: 'Referral', value: `${user.referralCount} orang`, icon: 'group-add', color: Colors.purple },
-          { label: 'Kode Referral', value: `#${user.referralCode}`, icon: 'qr-code', color: Colors.pink },
+          { label: 'Streak', value: `${user.checkinStreak} hari`, icon: 'local-fire-department', color: Colors.orange },
         ].map((item) => (
           <View key={item.label} style={styles.summaryCard}>
             <LinearGradient colors={['#10102E', '#161640']} style={styles.summaryGrad}>
@@ -210,6 +233,40 @@ export default function MiningScreen() {
           </View>
         ))}
       </View>
+
+      {/* Mining History */}
+      {reversedHistory.length > 0 && (
+        <View style={styles.historySection}>
+          <Text style={styles.sectionTitle}>Riwayat Aktivitas</Text>
+          <View style={styles.historyList}>
+            {reversedHistory.slice(0, 15).map((item, idx) => {
+              const iconData = HISTORY_ICONS[item.type] || { icon: 'info', color: Colors.primary };
+              const fadeIn = useRef(new Animated.Value(0)).current;
+              useEffect(() => {
+                Animated.timing(fadeIn, { toValue: 1, duration: 350, delay: idx * 40, useNativeDriver: true }).start();
+              }, []);
+              return (
+                <Animated.View key={item.id} style={[styles.historyItem, { opacity: fadeIn, transform: [{ translateX: fadeIn.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }] }]}>
+                  <LinearGradient colors={['#10102E', '#161640']} style={styles.historyItemGrad}>
+                    <View style={[styles.histIcon, { backgroundColor: iconData.color + '20' }]}>
+                      <MaterialIcons name={iconData.icon as any} size={16} color={iconData.color} />
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.histLabel}>{item.label}</Text>
+                      <Text style={styles.histTime}>{formatTimestamp(item.timestamp)}</Text>
+                    </View>
+                    {item.amount !== undefined && (
+                      <Text style={[styles.histAmount, { color: item.type === 'withdraw' || item.type === 'booster' ? Colors.error : Colors.accent }]}>
+                        {item.type === 'withdraw' || item.type === 'booster' ? `-${formatRupiah(item.amount)}` : `+${formatRupiah(item.amount)}`}
+                      </Text>
+                    )}
+                  </LinearGradient>
+                </Animated.View>
+              );
+            })}
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -217,7 +274,9 @@ export default function MiningScreen() {
 const styles = StyleSheet.create({
   header: { paddingHorizontal: Spacing.md, paddingBottom: Spacing.md },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  appTitle: { fontSize: 26, fontFamily: FontFamily.title, color: Colors.primary, letterSpacing: 3 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  logoSmall: { width: 40, height: 40, borderRadius: 20 },
+  appTitle: { fontSize: 22, fontFamily: FontFamily.title, color: Colors.primary, letterSpacing: 2 },
   danaNum: { fontSize: FontSize.sm, fontFamily: FontFamily.body, color: Colors.textMuted, marginTop: 2 },
   balanceBadge: { alignItems: 'flex-end', backgroundColor: 'rgba(255,215,0,0.08)', borderRadius: Radius.md, padding: 10, borderWidth: 1, borderColor: 'rgba(255,215,0,0.2)' },
   balanceLabel: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted },
@@ -237,9 +296,9 @@ const styles = StyleSheet.create({
   statDivider: { width: 1, height: 40, backgroundColor: Colors.border },
   statValue: { fontSize: FontSize.md, fontFamily: FontFamily.number, color: Colors.textPrimary },
   statLabel: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted },
-  mineBtn: { width: '100%', borderRadius: Radius.lg, overflow: 'hidden' },
+  mineBtn: { width: '100%', borderRadius: Radius.lg, overflow: 'hidden', marginTop: Spacing.xs },
   mineBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
-  mineBtnText: { fontSize: FontSize.lg, fontFamily: FontFamily.button, letterSpacing: 1.5 },
+  mineBtnText: { fontSize: FontSize.xl, fontFamily: FontFamily.button, letterSpacing: 2 },
   activeBoosters: { paddingHorizontal: Spacing.md, marginBottom: Spacing.md },
   sectionTitle: { fontSize: FontSize.md, fontFamily: FontFamily.bodySemibold, color: Colors.textSecondary },
   activeBoosterChip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,215,0,0.1)', borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 8, marginRight: 8, borderWidth: 1, borderColor: 'rgba(255,215,0,0.2)' },
@@ -250,4 +309,12 @@ const styles = StyleSheet.create({
   summaryGrad: { padding: Spacing.md, borderRadius: Radius.lg, gap: 6, borderWidth: 1, borderColor: Colors.border },
   summaryValue: { fontSize: FontSize.md, fontFamily: FontFamily.number },
   summaryLabel: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted },
+  historySection: { paddingHorizontal: Spacing.md, marginTop: Spacing.md, gap: Spacing.sm },
+  historyList: { gap: Spacing.xs, marginTop: Spacing.xs },
+  historyItem: { borderRadius: Radius.md, overflow: 'hidden' },
+  historyItemGrad: { flexDirection: 'row', alignItems: 'center', padding: Spacing.sm, gap: 10, borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.border },
+  histIcon: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  histLabel: { fontSize: FontSize.sm, fontFamily: FontFamily.bodyMedium, color: Colors.textPrimary },
+  histTime: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted, marginTop: 2 },
+  histAmount: { fontSize: FontSize.sm, fontFamily: FontFamily.number },
 });

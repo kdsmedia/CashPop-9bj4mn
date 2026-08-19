@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import {
   UserData,
+  MiningHistoryItem,
   loadUserData,
   saveUserData,
   defaultUserData,
@@ -8,7 +9,18 @@ import {
   calculateMiningEarnings,
   getActiveBoostersFiltered,
   getTodayString,
+  calculateStreak,
+  getStreakReward,
+  addHistoryItem,
+  loadHistory,
 } from '@/services/gameService';
+import {
+  setupNotifications,
+  scheduleBoosterExpiryReminder,
+  cancelAllNotifications,
+  scheduleCheckinReminder,
+  scheduleMiningReminder,
+} from '@/services/notificationService';
 import { MINING_BASE_RATE } from '@/constants/config';
 import type { ActiveBooster } from '@/services/gameService';
 
@@ -17,6 +29,7 @@ interface AppContextType {
   isLoading: boolean;
   currentHashRate: number;
   currentMultiplier: number;
+  miningHistory: MiningHistoryItem[];
   setupUser: (danaNumber: string, invitedBy?: string) => Promise<void>;
   startMining: () => void;
   stopMining: () => void;
@@ -27,6 +40,7 @@ interface AppContextType {
   rentBooster: (boosterId: string, multiplier: number, hours: number, cost: number) => Promise<boolean>;
   requestWithdrawal: (amount: number) => Promise<{ success: boolean; message: string }>;
   refreshUser: () => Promise<void>;
+  toggleNotifications: (enabled: boolean) => Promise<void>;
 }
 
 export const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -36,12 +50,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [currentHashRate, setCurrentHashRate] = useState(0);
   const [currentMultiplier, setCurrentMultiplier] = useState(1);
+  const [miningHistory, setMiningHistory] = useState<MiningHistoryItem[]>([]);
   const miningIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    loadUserData().then((data) => {
+    Promise.all([loadUserData(), loadHistory()]).then(([data, history]) => {
       setUser(data);
+      setMiningHistory(history);
       setIsLoading(false);
+      if (data.notificationsEnabled) {
+        setupNotifications();
+      }
     });
   }, []);
 
@@ -53,6 +72,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
     };
   }, [user.miningActive, user.activeBoosters]);
+
+  const appendHistory = useCallback(async (item: Omit<MiningHistoryItem, 'id' | 'timestamp'>) => {
+    setMiningHistory((prev) => {
+      const newItem: MiningHistoryItem = {
+        ...item,
+        id: `hist_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        timestamp: Date.now(),
+      };
+      const updated = [...prev, newItem].slice(-30);
+      addHistoryItem(prev, item);
+      return updated;
+    });
+  }, []);
 
   const startMiningTick = useCallback(() => {
     if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
@@ -91,10 +123,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       referralCode,
       isOnboarded: true,
       lastMiningTime: now,
+      notificationsEnabled: true,
       invitedBy,
     };
     await saveUserData(newUser);
     setUser(newUser);
+    await setupNotifications();
   }, []);
 
   const startMining = useCallback(() => {
@@ -103,7 +137,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveUserData(updated);
       return updated;
     });
-  }, []);
+    appendHistory({ type: 'start', label: 'Mining dimulai', icon: 'play-circle-filled', color: '#00FF7F' });
+  }, [appendHistory]);
 
   const stopMining = useCallback(() => {
     if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
@@ -113,22 +148,35 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return updated;
     });
     setCurrentHashRate(0);
-  }, []);
+    appendHistory({ type: 'stop', label: 'Mining dihentikan', icon: 'stop-circle', color: '#FF4757' });
+  }, [appendHistory]);
 
   const claimCheckin = useCallback(async (): Promise<number> => {
-    const reward = 200;
+    let reward = 200;
     setUser((prev) => {
+      const newStreak = calculateStreak(prev.checkinStreak, prev.lastStreakDate);
+      reward = getStreakReward(newStreak);
       const updated = {
         ...prev,
         balance: prev.balance + reward,
         totalEarned: prev.totalEarned + reward,
         lastCheckinDate: getTodayString(),
+        checkinStreak: newStreak,
+        lastStreakDate: getTodayString(),
       };
       saveUserData(updated);
       return updated;
     });
+    await new Promise((r) => setTimeout(r, 50));
+    appendHistory({
+      type: 'checkin',
+      label: `Check-in harian`,
+      amount: reward,
+      icon: 'event-available',
+      color: '#00FF7F',
+    });
     return reward;
-  }, []);
+  }, [appendHistory]);
 
   const claimSpin = useCallback(async (amount: number, type: string, value: number) => {
     setUser((prev) => {
@@ -149,7 +197,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveUserData(updated);
       return updated;
     });
-  }, []);
+    appendHistory({
+      type: 'spin',
+      label: type === 'cash' ? `Spin: +${amount}` : `Spin: Booster ${value}j`,
+      amount: type === 'cash' ? amount : undefined,
+      icon: 'casino',
+      color: '#8B5CF6',
+    });
+  }, [appendHistory]);
 
   const watchAd = useCallback(async (): Promise<number> => {
     const reward = 10;
@@ -168,8 +223,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveUserData(updated);
       return updated;
     });
+    appendHistory({ type: 'reward', label: `Reward aktivitas`, amount: reward, icon: 'stars', color: '#FFD700' });
     return reward;
-  }, []);
+  }, [appendHistory]);
 
   const addReferral = useCallback(async (): Promise<number> => {
     const reward = 500;
@@ -183,8 +239,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveUserData(updated);
       return updated;
     });
+    appendHistory({ type: 'referral', label: 'Referral valid', amount: reward, icon: 'group-add', color: '#4ECDC4' });
     return reward;
-  }, []);
+  }, [appendHistory]);
 
   const rentBooster = useCallback(async (
     boosterId: string,
@@ -193,6 +250,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     cost: number
   ): Promise<boolean> => {
     let success = false;
+    let boosterRef: ActiveBooster | null = null;
     setUser((prev) => {
       if (prev.balance < cost) return prev;
       const booster: ActiveBooster = {
@@ -201,6 +259,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         multiplier,
         expiresAt: Date.now() + hours * 3600000,
       };
+      boosterRef = booster;
       const updated = {
         ...prev,
         balance: prev.balance - cost,
@@ -211,8 +270,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return updated;
     });
     await new Promise((r) => setTimeout(r, 50));
+    if (success && boosterRef) {
+      appendHistory({
+        type: 'booster',
+        label: `Booster ${boosterId} aktif ${hours}j`,
+        amount: cost,
+        icon: 'bolt',
+        color: '#FF8C42',
+      });
+      if (user.notificationsEnabled) {
+        scheduleBoosterExpiryReminder(boosterRef.id, boosterId, boosterRef.expiresAt);
+      }
+    }
     return success;
-  }, []);
+  }, [appendHistory, user.notificationsEnabled]);
 
   const requestWithdrawal = useCallback(async (
     amount: number
@@ -229,7 +300,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return prev;
       }
       if (prev.totalAdsWatched < 350) {
-        result = { success: false, message: `Butuh ${350 - prev.totalAdsWatched} video lagi` };
+        result = { success: false, message: `Butuh ${350 - prev.totalAdsWatched} aktivitas lagi` };
         return prev;
       }
       const updated = {
@@ -242,12 +313,29 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return updated;
     });
     await new Promise((r) => setTimeout(r, 50));
+    if (result.success) {
+      appendHistory({ type: 'withdraw', label: `Tarik saldo`, amount, icon: 'send', color: '#FF6B9D' });
+    }
     return result;
-  }, []);
+  }, [appendHistory]);
 
   const refreshUser = useCallback(async () => {
     const data = await loadUserData();
     setUser(data);
+  }, []);
+
+  const toggleNotifications = useCallback(async (enabled: boolean) => {
+    setUser((prev) => {
+      const updated = { ...prev, notificationsEnabled: enabled };
+      saveUserData(updated);
+      return updated;
+    });
+    if (enabled) {
+      await scheduleCheckinReminder();
+      await scheduleMiningReminder();
+    } else {
+      await cancelAllNotifications();
+    }
   }, []);
 
   return (
@@ -257,6 +345,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         currentHashRate,
         currentMultiplier,
+        miningHistory,
         setupUser,
         startMining,
         stopMining,
@@ -267,6 +356,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         rentBooster,
         requestWithdrawal,
         refreshUser,
+        toggleNotifications,
       }}
     >
       {children}

@@ -6,9 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -17,10 +14,11 @@ import { useApp } from '@/hooks/useApp';
 import { useAlert } from '@/template';
 import { Colors, Spacing, Radius, FontSize, FontFamily } from '@/constants/theme';
 import { formatRupiah, canWithdraw, getTodayString } from '@/services/gameService';
-import { WITHDRAWAL_MIN } from '@/constants/config';
+import { WITHDRAWAL_MIN, PLAYSTORE_BASE_URL } from '@/constants/config';
+import { TextInput, KeyboardAvoidingView, Platform, Switch } from 'react-native';
 
 export default function WalletScreen() {
-  const { user, requestWithdrawal } = useApp();
+  const { user, requestWithdrawal, toggleNotifications } = useApp();
   const { showAlert } = useAlert();
   const insets = useSafeAreaInsets();
 
@@ -82,6 +80,7 @@ export default function WalletScreen() {
   };
 
   const quickAmounts = [10000, 25000, 50000, 100000];
+  const referralUrl = `${PLAYSTORE_BASE_URL}${user.referralCode}`;
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
@@ -152,7 +151,7 @@ export default function WalletScreen() {
                     value: formatRupiah(user.balance),
                   },
                   {
-                    label: 'Video (350× total)',
+                    label: 'Aktivitas (350× total)',
                     done: user.totalAdsWatched >= 350,
                     value: `${user.totalAdsWatched}/350`,
                   },
@@ -179,10 +178,10 @@ export default function WalletScreen() {
 
                 <View style={styles.adsProgWrap}>
                   <View style={styles.adsProgBar}>
-                    <Animated.View style={[styles.adsProgFill, { width: `${adsProgress * 100}%` }]} />
+                    <View style={[styles.adsProgFill, { width: `${adsProgress * 100}%` }]} />
                   </View>
                   <Text style={styles.adsProgText}>
-                    {adsRemaining > 0 ? `${adsRemaining} video lagi` : 'Syarat terpenuhi!'}
+                    {adsRemaining > 0 ? `${adsRemaining} aktivitas lagi` : 'Syarat terpenuhi!'}
                   </Text>
                 </View>
               </LinearGradient>
@@ -208,48 +207,50 @@ export default function WalletScreen() {
                   ))}
                 </View>
 
-                <View style={styles.inputRow}>
-                  <View style={styles.inputWrap}>
-                    <Text style={styles.rpPrefix}>Rp</Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Masukkan nominal"
-                      placeholderTextColor={Colors.textMuted}
-                      value={amount ? parseInt(amount).toLocaleString('id') : ''}
-                      onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
-                      keyboardType="numeric"
-                    />
-                  </View>
+                <View style={styles.inputWrap}>
+                  <Text style={styles.rpPrefix}>Rp</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Masukkan nominal"
+                    placeholderTextColor={Colors.textMuted}
+                    value={amount ? parseInt(amount).toLocaleString('id') : ''}
+                    onChangeText={(t) => setAmount(t.replace(/\D/g, ''))}
+                    keyboardType="numeric"
+                  />
                 </View>
 
                 <Text style={styles.minNote}>Minimal penarikan: {formatRupiah(WITHDRAWAL_MIN)} · 1× per hari</Text>
 
                 <View style={styles.danaTarget}>
                   <MaterialIcons name="send" size={16} color={Colors.primary} />
-                  <Text style={styles.danaTargetText}>Dikirim ke: <Text style={{ fontFamily: FontFamily.number, color: Colors.primary }}>{user.danaNumber}</Text></Text>
+                  <Text style={styles.danaTargetText}>
+                    Dikirim ke: <Text style={{ fontFamily: FontFamily.number, color: Colors.primary }}>{user.danaNumber}</Text>
+                  </Text>
                 </View>
 
-                <TouchableOpacity
-                  style={[styles.withdrawBtn, (!withdrawCheck.canWithdraw || loading) && styles.withdrawBtnDisabled]}
-                  onPress={handleWithdraw}
-                  disabled={!withdrawCheck.canWithdraw || loading}
-                  activeOpacity={0.85}
-                >
-                  <LinearGradient
-                    colors={withdrawCheck.canWithdraw ? ['#FFD700', '#FF8C42'] : ['#333', '#444']}
-                    style={styles.withdrawBtnGrad}
-                    start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                <View style={styles.btnSpacing}>
+                  <TouchableOpacity
+                    style={[styles.withdrawBtn, (!withdrawCheck.canWithdraw || loading) && styles.withdrawBtnDisabled]}
+                    onPress={handleWithdraw}
+                    disabled={!withdrawCheck.canWithdraw || loading}
+                    activeOpacity={0.85}
                   >
-                    <MaterialIcons
-                      name={loading ? 'hourglass-top' : withdrawCheck.canWithdraw ? 'send' : 'lock'}
-                      size={20}
-                      color={withdrawCheck.canWithdraw ? '#000' : '#888'}
-                    />
-                    <Text style={[styles.withdrawBtnText, { color: withdrawCheck.canWithdraw ? '#000' : '#888' }]}>
-                      {loading ? 'Memproses...' : withdrawCheck.canWithdraw ? 'TARIK SEKARANG' : 'Syarat Belum Terpenuhi'}
-                    </Text>
-                  </LinearGradient>
-                </TouchableOpacity>
+                    <LinearGradient
+                      colors={withdrawCheck.canWithdraw ? ['#FFD700', '#FF8C42'] : ['#333', '#444']}
+                      style={styles.withdrawBtnGrad}
+                      start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
+                    >
+                      <MaterialIcons
+                        name={loading ? 'hourglass-top' : withdrawCheck.canWithdraw ? 'send' : 'lock'}
+                        size={20}
+                        color={withdrawCheck.canWithdraw ? '#000' : '#888'}
+                      />
+                      <Text style={[styles.withdrawBtnText, { color: withdrawCheck.canWithdraw ? '#000' : '#888' }]}>
+                        {loading ? 'Memproses...' : withdrawCheck.canWithdraw ? 'TARIK SEKARANG' : 'Syarat Belum Terpenuhi'}
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
 
                 {!withdrawCheck.canWithdraw && withdrawCheck.reason && (
                   <View style={styles.errorNote}>
@@ -271,13 +272,51 @@ export default function WalletScreen() {
                 </View>
                 <TouchableOpacity
                   style={styles.copyBtn}
-                  onPress={() => showAlert('Referral', `Kode: ${user.referralCode}\nLink: play.google.com/store/apps/details?id=com.altomedia.cashpop&ref=${user.referralCode}`)}
+                  onPress={() => showAlert(
+                    'Link Referral',
+                    `Link:\n${referralUrl}\n\nKode: ${user.referralCode}`
+                  )}
                   activeOpacity={0.8}
                 >
                   <LinearGradient colors={['#00FF7F', '#00CC66']} style={styles.copyBtnGrad}>
                     <MaterialIcons name="share" size={16} color="#000" />
                   </LinearGradient>
                 </TouchableOpacity>
+              </LinearGradient>
+            </View>
+
+            {/* Notifications Toggle */}
+            <View style={styles.notifCard}>
+              <LinearGradient colors={['#10102E', '#161640']} style={styles.notifGrad}>
+                <View style={styles.notifRow}>
+                  <MaterialIcons name="notifications" size={22} color={Colors.purple} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.notifTitle}>Notifikasi</Text>
+                    <Text style={styles.notifSub}>Pengingat check-in & mining harian</Text>
+                  </View>
+                  <Switch
+                    value={user.notificationsEnabled}
+                    onValueChange={(val) => toggleNotifications(val)}
+                    trackColor={{ false: Colors.border, true: Colors.purple + '66' }}
+                    thumbColor={user.notificationsEnabled ? Colors.purple : Colors.textMuted}
+                  />
+                </View>
+
+                {user.notificationsEnabled && (
+                  <View style={styles.notifList}>
+                    {[
+                      { icon: 'event-available', label: 'Check-in harian', time: '08:00' },
+                      { icon: 'diamond', label: 'Ringkasan mining', time: '21:00' },
+                      { icon: 'bolt', label: 'Booster habis', time: '1j sebelum' },
+                    ].map((n) => (
+                      <View key={n.label} style={styles.notifItem}>
+                        <MaterialIcons name={n.icon as any} size={14} color={Colors.textMuted} />
+                        <Text style={styles.notifItemLabel}>{n.label}</Text>
+                        <Text style={styles.notifItemTime}>{n.time}</Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
               </LinearGradient>
             </View>
           </Animated.View>
@@ -318,20 +357,20 @@ const styles = StyleSheet.create({
   adsProgFill: { height: '100%', backgroundColor: Colors.accent, borderRadius: 3 },
   adsProgText: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted },
   formCard: { borderRadius: Radius.xl, overflow: 'hidden' },
-  formGrad: { padding: Spacing.md, gap: Spacing.md, borderRadius: Radius.xl, borderWidth: 1, borderColor: Colors.border },
-  formTitle: { fontSize: FontSize.lg, fontFamily: FontFamily.bodySemibold, color: Colors.textPrimary },
+  formGrad: { padding: Spacing.md, gap: Spacing.sm, borderRadius: Radius.xl, borderWidth: 1, borderColor: Colors.border },
+  formTitle: { fontSize: FontSize.lg, fontFamily: FontFamily.bodySemibold, color: Colors.textPrimary, marginBottom: Spacing.xs },
   quickRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   quickBtn: { borderRadius: Radius.sm, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 12, paddingVertical: 8, backgroundColor: Colors.bgSurface },
   quickBtnActive: { borderColor: Colors.primary, backgroundColor: 'rgba(255,215,0,0.1)' },
   quickBtnText: { fontSize: FontSize.sm, fontFamily: FontFamily.body, color: Colors.textSecondary },
   quickBtnTextActive: { fontFamily: FontFamily.number, color: Colors.primary },
-  inputRow: {},
-  inputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: Spacing.md },
+  inputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: Spacing.md, marginVertical: Spacing.xs },
   rpPrefix: { fontSize: FontSize.lg, fontFamily: FontFamily.number, color: Colors.primary, marginRight: 8 },
   input: { flex: 1, height: 52, color: Colors.textPrimary, fontSize: FontSize.lg, fontFamily: FontFamily.number },
   minNote: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted },
   danaTarget: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: 'rgba(255,215,0,0.06)', borderRadius: Radius.sm, padding: Spacing.sm },
   danaTargetText: { fontSize: FontSize.sm, fontFamily: FontFamily.body, color: Colors.textSecondary },
+  btnSpacing: { marginTop: Spacing.xs },
   withdrawBtn: { borderRadius: Radius.md, overflow: 'hidden' },
   withdrawBtnDisabled: { opacity: 0.6 },
   withdrawBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18 },
@@ -345,4 +384,13 @@ const styles = StyleSheet.create({
   refHint: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted, marginTop: 2 },
   copyBtn: { width: 44, height: 44, borderRadius: 22, overflow: 'hidden' },
   copyBtnGrad: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 22 },
+  notifCard: { borderRadius: Radius.xl, overflow: 'hidden' },
+  notifGrad: { padding: Spacing.md, gap: Spacing.sm, borderRadius: Radius.xl, borderWidth: 1, borderColor: Colors.border },
+  notifRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
+  notifTitle: { fontSize: FontSize.md, fontFamily: FontFamily.bodySemibold, color: Colors.textPrimary },
+  notifSub: { fontSize: FontSize.xs, fontFamily: FontFamily.body, color: Colors.textMuted, marginTop: 2 },
+  notifList: { gap: Spacing.xs, paddingTop: Spacing.xs, borderTopWidth: 1, borderTopColor: Colors.border },
+  notifItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  notifItemLabel: { flex: 1, fontSize: FontSize.sm, fontFamily: FontFamily.body, color: Colors.textMuted },
+  notifItemTime: { fontSize: FontSize.xs, fontFamily: FontFamily.number, color: Colors.purple },
 });

@@ -1,63 +1,49 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialIcons } from '@expo/vector-icons';
-import { Colors, FontSize, FontWeight } from '@/constants/theme';
+import React from 'react';
+import { View, StyleSheet, Platform } from 'react-native';
+import { Colors } from '@/constants/theme';
+import { ADMOB_IDS } from '@/constants/config';
+
+// react-native-google-mobile-ads integration
+let BannerAd: any = null;
+let BannerAdSize: any = null;
+let TestIds: any = null;
+
+try {
+  const admob = require('react-native-google-mobile-ads');
+  BannerAd = admob.BannerAd;
+  BannerAdSize = admob.BannerAdSize;
+  TestIds = admob.TestIds;
+} catch {}
 
 export function AdmobBanner() {
-  const shimmerAnim = useRef(new Animated.Value(0)).current;
+  if (!BannerAd) {
+    return <View style={styles.placeholder} />;
+  }
 
-  useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(shimmerAnim, { toValue: 1, duration: 1800, useNativeDriver: true }),
-        Animated.timing(shimmerAnim, { toValue: 0, duration: 1800, useNativeDriver: true }),
-      ])
-    ).start();
-  }, []);
-
-  const opacity = shimmerAnim.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] });
+  const adUnitId = __DEV__
+    ? (TestIds?.BANNER || 'ca-app-pub-3940256099942544/6300978111')
+    : ADMOB_IDS.BANNER;
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['rgba(255,215,0,0.08)', 'rgba(255,140,66,0.08)']}
-        style={styles.banner}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
-        <Animated.View style={[styles.inner, { opacity }]}>
-          <MaterialIcons name="campaign" size={16} color={Colors.textMuted} />
-          <Text style={styles.label}>Advertisement</Text>
-          <View style={styles.adSlot}>
-            <Text style={styles.adText}>Banner Ad 320×50</Text>
-          </View>
-        </Animated.View>
-      </LinearGradient>
+      <BannerAd
+        unitId={adUnitId}
+        size={BannerAdSize?.BANNER || 'BANNER'}
+        requestOptions={{ requestNonPersonalizedAdsOnly: false }}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: 54,
-    backgroundColor: 'rgba(255,255,255,0.03)',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255,215,0,0.15)',
-  },
-  banner: { flex: 1, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, paddingHorizontal: 16 },
-  inner: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  label: { fontSize: FontSize.xs, color: Colors.textMuted },
-  adSlot: {
-    flex: 1,
-    height: 36,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderRadius: 4,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.06)',
-    borderStyle: 'dashed',
+    backgroundColor: Colors.tabBg,
+    minHeight: 52,
   },
-  adText: { fontSize: FontSize.xs, color: Colors.textMuted },
+  placeholder: {
+    height: 0,
+    backgroundColor: 'transparent',
+  },
 });
