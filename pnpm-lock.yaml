@@ -1203,10 +1203,6 @@ packages:
   '@expo/server@0.6.3':
     resolution: {integrity: sha512-Ea7NJn9Xk1fe4YeJ86rObHSv/bm3u/6WiQPXEqXJ2GrfYpVab2Swoh9/PnSM3KjR64JAgKjArDn1HiPjITCfHA==}
 
-  '@expo/spawn-async@1.7.2':
-    resolution: {integrity: sha512-QdWi16+CHB9JYP7gma19OVVg0BFkvU8zNj9GjWorYI8Iv8FUxjOCcYRuAmX4s/h91e4e7BPsskc8cSrZYho9Ew==}
-    engines: {node: '>=12'}
-
   '@expo/spawn-async@1.8.0':
     resolution: {integrity: sha512-eb9xxd/LbuEGSdua4NumCu/McVB9EM+F/JxB9pWgnERw4HQ9XyTNH1KapG6oqLWR8TuRK2LQfzJlmNi94CVobw==}
     engines: {node: '>=12'}
@@ -7186,7 +7182,7 @@ snapshots:
       '@expo/plist': 0.3.5
       '@expo/prebuild-config': 9.0.12(supports-color@8.1.1)
       '@expo/schema-utils': 0.1.9
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       '@expo/ws-tunnel': 1.0.6
       '@expo/xcpretty': 4.3.2
       '@react-native/dev-middleware': 0.79.6(supports-color@8.1.1)
@@ -7302,7 +7298,7 @@ snapshots:
 
   '@expo/fingerprint@0.13.4(supports-color@8.1.1)':
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       arg: 5.0.2
       chalk: 4.1.2
       debug: 4.4.1(supports-color@8.1.1)
@@ -7348,7 +7344,7 @@ snapshots:
       '@expo/config': 11.0.13(supports-color@8.1.1)
       '@expo/env': 1.0.7(supports-color@8.1.1)
       '@expo/json-file': 9.1.5
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       debug: 4.4.1(supports-color@8.1.1)
       dotenv: 16.4.7
@@ -7413,10 +7409,6 @@ snapshots:
       undici: 7.10.0
     transitivePeerDependencies:
       - supports-color
-
-  '@expo/spawn-async@1.7.2':
-    dependencies:
-      cross-spawn: 7.0.6
 
   '@expo/spawn-async@1.8.0':
     dependencies:
@@ -10092,7 +10084,7 @@ snapshots:
 
   expo-modules-autolinking@2.1.15:
     dependencies:
-      '@expo/spawn-async': 1.7.2
+      '@expo/spawn-async': 1.8.0
       chalk: 4.1.2
       commander: 7.2.0
       find-up: 5.0.0
@@ -10406,7 +10398,7 @@ snapshots:
 
   fork-ts-checker-webpack-plugin@6.5.3(eslint@9.28.0(jiti@1.21.7)(supports-color@8.1.1))(typescript@5.8.3)(webpack@5.99.9):
     dependencies:
-      '@babel/code-frame': 7.27.1
+      '@babel/code-frame': 7.29.7
       '@types/json-schema': 7.0.15
       chalk: 4.1.2
       chokidar: 3.6.0
