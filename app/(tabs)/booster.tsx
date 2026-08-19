@@ -251,7 +251,7 @@ export default function BoosterScreen() {
           <View style={styles.infoBox}>
             <MaterialIcons name="info-outline" size={16} color={Colors.info} />
             <Text style={styles.infoText}>
-              Booster menggunakan saldo penghasilan. Booster aktif hingga durasi habis meski tidak mining.
+              Booster aktif hingga durasi habis meski tidak mining.
             </Text>
           </View>
         </Animated.View>
