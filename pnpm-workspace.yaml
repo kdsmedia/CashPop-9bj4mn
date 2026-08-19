@@ -3,4 +3,5 @@ packages:
 
 allowBuilds:
   protobufjs: true
+  react-native-elements: set this to true or false
   unrs-resolver: true

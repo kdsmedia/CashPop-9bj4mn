@@ -18,8 +18,16 @@ import {
   Baloo2_600SemiBold,
   Baloo2_700Bold,
 } from '@expo-google-fonts/baloo-2';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Alert } from 'react-native';
+import { useEffect } from 'react';
 import { Colors } from '@/constants/theme';
+import {
+  installCrashReporter,
+  getLastCrash,
+  clearLastCrash,
+} from '@/services/crashReporter';
+
+installCrashReporter();
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -33,6 +41,17 @@ export default function RootLayout() {
     Baloo2_600SemiBold,
     Baloo2_700Bold,
   });
+
+  useEffect(() => {
+    getLastCrash().then((crash) => {
+      if (!crash) return;
+      Alert.alert(
+        'Laporan Error',
+        crash.slice(0, 1000),
+        [{ text: 'OK, hapus', onPress: () => clearLastCrash() }]
+      );
+    });
+  }, []);
 
   if (!fontsLoaded) {
     return (

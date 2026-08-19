@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
+import mobileAds, {
   InterstitialAd,
   AdEventType,
   TestIds,
@@ -7,6 +7,20 @@ import {
 import { ADMOB_IDS, INTERSTITIAL_INTERVAL_MS } from '@/constants/config';
 
 const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ADMOB_IDS.INTERSTITIAL;
+
+let initPromise: Promise<void> | null = null;
+
+export function ensureAdsInitialized(): Promise<void> {
+  if (!initPromise) {
+    initPromise = mobileAds()
+      .initialize()
+      .then(() => undefined)
+      .catch(() => {
+        initPromise = null;
+      });
+  }
+  return initPromise;
+}
 
 let adInstance: ReturnType<typeof InterstitialAd.createForAdRequest> | null = null;
 let adLoaded = false;
@@ -49,7 +63,7 @@ export function useInterstitialAd() {
   };
 
   useEffect(() => {
-    loadNewAd();
+    ensureAdsInitialized().then(loadNewAd);
     timerRef.current = setInterval(() => {
       showIfReady();
     }, 60 * 1000);
