@@ -71,17 +71,14 @@ export default function SplashScreen() {
       });
     }, stepInterval);
 
-    // Progress percent updater
-    const percentTimer = setInterval(() => {
-      progressAnim.addListener(({ value }) => {
-        setProgressPercent(Math.floor(value * 100));
-      });
-    }, 100);
+    // Progress percent updater — register the listener once, not every 100ms
+    const listenerId = progressAnim.addListener(({ value }) => {
+      setProgressPercent(Math.floor(value * 100));
+    });
 
     return () => {
       clearInterval(stepTimer);
-      clearInterval(percentTimer);
-      progressAnim.removeAllListeners();
+      progressAnim.removeListener(listenerId);
     };
   }, []);
 
