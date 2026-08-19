@@ -160,14 +160,7 @@
       "reactNativeDirectoryCheck": {
         "listUnknownPackages": false,
         "exclude": [
-          "react-native-chart-kit",
-          "react-native-keyboard-aware-scroll-view",
-          "react-native-webrtc",
-          "expo-av",
-          "react-native-dynamic",
-          "react-native-fade-in-image",
-          "react-native-infinite-scroll-view",
-          "react-native-markdown-display"
+          "react-native-exception-handler"
         ]
       }
     },
