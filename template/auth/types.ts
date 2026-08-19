@@ -57,7 +57,7 @@ export interface AuthContextType {
   refreshSession: () => Promise<void>;
 }
 
-export interface SupabaseAuthConfig {
+export interface AuthConfig {
   supabaseUrl: string;
   supabaseAnonKey: string;
   profileTableName?: string;
