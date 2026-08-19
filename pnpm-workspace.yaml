@@ -1,10 +1,5 @@
 packages:
   - "."
 
-publicHoistPattern:
-  - "expo-modules-autolinking"
-
 allowBuilds:
-  protobufjs: true
-  react-native-elements: false
   unrs-resolver: true
