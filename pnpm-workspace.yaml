@@ -2,4 +2,5 @@ packages:
   - "."
 
 allowBuilds:
+  react-native-elements: false
   unrs-resolver: true
