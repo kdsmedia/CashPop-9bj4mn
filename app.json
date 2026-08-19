@@ -25,6 +25,9 @@
       },
       "package": "com.altomedia.cashpop",
       "versionCode": 1,
+      "minSdkVersion": 23,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
       "permissions": [
         "INTERNET",
         "RECEIVE_BOOT_COMPLETED",
