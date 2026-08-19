@@ -203,9 +203,6 @@ importers:
       expo-media-library:
         specifier: ^17.1.7
         version: 17.1.7(expo@53.0.12(@babel/core@7.27.4(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(graphql@15.10.2)(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1))(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))
-      expo-modules-autolinking:
-        specifier: '*'
-        version: 2.1.12
       expo-navigation-bar:
         specifier: ~4.2.7
         version: 4.2.8(expo@53.0.12(@babel/core@7.27.4(supports-color@8.1.1))(@expo/metro-runtime@5.0.4(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1)))(graphql@15.10.2)(react-native-webview@13.13.5(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0))(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1))(react-native@0.79.3(@babel/core@7.27.4(supports-color@8.1.1))(@types/react@19.0.14)(react@19.0.0)(supports-color@8.1.1))(react@19.0.0)(supports-color@8.1.1)
