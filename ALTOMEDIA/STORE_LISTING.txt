@@ -1,0 +1,173 @@
+======================================================
+  PANDUAN STORE LISTING CASHPOP — GOOGLE PLAY STORE
+  Developer: ALTOMEDIA
+  Package: com.altomedia.cashpop
+======================================================
+
+========================================
+DATA UTAMA LISTING
+========================================
+
+Nama Aplikasi (maks 50 karakter):
+  CashPOP - Mining Saldo DANA
+
+Deskripsi Singkat (maks 80 karakter):
+  Mining saldo DANA otomatis, spin roda & reward harian menanti!
+
+Kategori Utama:
+  Kasual (atau Finance, tergantung kebijakan Google saat review)
+
+Sub-Kategori (jika ada):
+  Reward App / Game Kasual
+
+Rating Konten:
+  Teen (13+) atau sesuai hasil kuesioner IARC
+
+URL Kebijakan Privasi:
+  https://altomedia.github.io/cashpop/privacy-policy
+
+Situs Web Developer (opsional):
+  https://altomediaindonesia@gmail.com
+
+Alamat Email:
+  altomediaindonesia@gmail.com
+
+========================================
+DESKRIPSI PANJANG (maks 4.000 karakter)
+========================================
+
+--- BAHASA INDONESIA ---
+
+💰 CASHPOP - Aplikasi Mining Saldo DANA Paling Seru!
+
+Selamat datang di CashPOP, aplikasi mining saldo DANA otomatis yang membuat kamu bisa menghasilkan saldo nyata sambil bermain! Dengan antarmuka 2D yang penuh animasi dan sistem reward yang adil, CashPOP adalah cara paling menyenangkan untuk menambah saldo DANA kamu setiap harinya.
+
+🔥 APA ITU CASHPOP?
+CashPOP adalah aplikasi game reward berbasis simulasi mining. Cukup masukkan nomor DANA kamu, tekan tombol START, dan biarkan mesin mining CashPOP bekerja mengumpulkan saldo untukmu! Dengan berbagai fitur bonus harian, kamu bisa mempercepat penghasilan dan menarik saldo langsung ke akun DANA.
+
+⚡ FITUR UTAMA:
+
+🏦 Mining Otomatis 24/7
+Jalankan mesin mining CashPOP dan biarkan saldo terkumpul secara otomatis. Tampilan algoritma mining yang canggih dengan animasi binary code membuat pengalaman mining terasa nyata dan seru!
+
+🎰 Spin Roda Harian
+Setiap hari kamu berhak memutar roda berhadiah CashPOP! Dengan 8 sektor hadiah yang berbeda, kamu bisa memenangkan:
+- Saldo tunai Rp50 hingga Rp1.000
+- Booster gratis untuk mempercepat mining
+- Dan hadiah spesial lainnya!
+
+📅 Check-in Harian + Sistem Streak
+Hadir setiap hari untuk klaim bonus check-in! Semakin panjang streak-mu, semakin besar bonusnya:
+- Hari 1: Rp200
+- Streak 3 hari: Rp300  
+- Streak 7 hari: Rp500
+- Streak 30 hari: Rp1.000!
+
+🚀 4 Paket Power Booster
+Percepat mining dengan menyewa power booster premium:
+- ⚡ Basic Miner (2× Hash Rate) — mulai Rp10.000
+- ⚡⚡ Pro Miner (5× Hash Rate) — mulai Rp20.000
+- 🚀 Turbo Miner (10× Hash Rate) — mulai Rp40.000
+- ⭐ Ultra Miner (25× Hash Rate) — mulai Rp100.000
+Tersedia dalam paket sewa 24 jam, 3 hari, 5 hari, dan 7 hari!
+
+📋 Tugas Harian
+Selesaikan tugas harian untuk mendapatkan bonus tambahan:
+- Aktivitas harian: Rp10 per aktivitas (maks 20×/hari)
+- Undang teman: Rp500 per referral valid (maks 10×/hari)
+
+👑 Papan Peringkat
+Bersaing dengan miner lain di seluruh Indonesia! Tampilkan kemampuanmu di papan peringkat Top 10 dan raih gelar miner terbaik!
+
+💎 Kode Referral Unik
+Setiap pengguna mendapat kode referral 6 digit unik. Bagikan link khusus ke teman, dan dapatkan Rp500 untuk setiap teman yang bergabung menggunakan kodemu!
+
+💵 Penarikan ke DANA
+Tarik saldo penghasilan langsung ke akun DANA-mu! Syarat penarikan yang jelas dan transparan memastikan kamu tahu kapan saldo bisa dicairkan.
+
+🔔 Notifikasi Pintar
+Kami akan mengingatkanmu untuk:
+- Check-in harian (pukul 08.00)
+- Ringkasan mining malam (pukul 21.00)
+- Booster hampir habis (1 jam sebelum berakhir)
+
+⭐ MENGAPA CASHPOP?
+✅ Gratis 100% — tidak ada biaya tersembunyi
+✅ Penarikan langsung ke DANA
+✅ Sistem reward yang adil dan transparan
+✅ Animasi 2D premium yang seru
+✅ Tidak perlu internet terus-menerus saat mining
+✅ Data tersimpan aman di perangkatmu
+✅ Dukungan notifikasi pengingat pintar
+
+📌 SYARAT PENARIKAN:
+- Saldo minimum: Rp10.000
+- Total aktivitas: 350× (kumulatif)
+- Maks penarikan: 1× per hari
+
+Unduh CashPOP sekarang dan mulai perjalanan mining saldo DANA-mu! Ratusan ribu pengguna sudah bergabung — giliran kamu! 🎯
+
+--- CATATAN: Aplikasi ini menggunakan Google AdMob untuk menampilkan konten promosi ---
+
+========================================
+KATA KUNCI (KEYWORDS) — Untuk ASO
+========================================
+
+mining saldo, dana mining, saldo gratis, game penghasil uang, cashback dana, reward harian, spin roda berhadiah, aplikasi penghasil dana, mining app indonesia, saldo dana gratis, game reward indonesia, aplikasi cuan, cashpop, mining otomatis, penghasil saldo, bonus harian, check in reward, referral bonus, spin wheel, power booster
+
+========================================
+DETAIL KONTAK & INFORMASI DEVELOPER
+========================================
+
+Nama Developer (di Play Store):
+  ALTOMEDIA
+
+Email (wajib terverifikasi):
+  altomediaindonesia@gmail.com
+
+Website (opsional):
+  -
+
+Kebijakan Privasi URL:
+  [Host file PRIVACY_POLICY.md di web dan masukkan URL di sini]
+  Contoh: https://sites.google.com/view/cashpop-privacy/home
+
+========================================
+RATING CONTENT (KUESIONER IARC)
+========================================
+
+Jawaban kuesioner rating konten Google Play (perkiraan):
+
+Pertanyaan: Apakah aplikasi ini mengandung kekerasan? TIDAK
+Pertanyaan: Apakah aplikasi ini mengandung konten seksual? TIDAK
+Pertanyaan: Apakah aplikasi ini mengandung bahasa kasar? TIDAK
+Pertanyaan: Apakah ada konten yang dibuat pengguna? TIDAK
+Pertanyaan: Apakah ada pembelian in-app? TIDAK (saat ini)
+Pertanyaan: Apakah berbagi lokasi pengguna? TIDAK
+Pertanyaan: Apakah ada konten perjudian? TIDAK
+  (Spin roda adalah fitur reward game, bukan perjudian berbayar)
+
+Perkiraan rating: Everyone / Everyone 10+
+
+========================================
+INFORMASI TEKNIS UNTUK LISTING
+========================================
+
+Package Name   : com.altomedia.cashpop
+Version        : 1.0.0
+Version Code   : 1
+Min Android    : 6.0 (API 23)
+Target Android : 14 (API 34)
+Ukuran APK     : ~40-60 MB (estimasi)
+Ukuran AAB     : ~35-50 MB (estimasi)
+
+Izin yang dibutuhkan (permissions):
+- INTERNET (untuk AdMob dan koneksi data)
+- RECEIVE_BOOT_COMPLETED (untuk notifikasi terjadwal)
+- POST_NOTIFICATIONS (untuk notifikasi di Android 13+)
+- VIBRATE (untuk feedback haptic)
+
+======================================================
+END OF STORE LISTING GUIDE
+© 2025 ALTOMEDIA
+======================================================

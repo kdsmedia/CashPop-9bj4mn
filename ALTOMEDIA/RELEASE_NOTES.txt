@@ -1,0 +1,95 @@
+======================================================
+  CATATAN RILIS CASHPOP
+  Developer: ALTOMEDIA
+  Package: com.altomedia.cashpop
+  Kontak: altomediaindonesia@gmail.com
+======================================================
+
+────────────────────────────────────────────────────
+  VERSI 1.0.0 (Build: 1)
+  Tanggal Rilis: Agustus 2026
+  Status: RILIS PERDANA
+────────────────────────────────────────────────────
+
+CATATAN RILIS (Untuk Play Console):
+
+ID:   1
+Kode: 1.0.0
+Judul: Rilis Perdana CashPOP — Mining Saldo DANA Otomatis
+
+Konten untuk Catatan Rilis (Bahasa Indonesia):
+----------------------------------------------
+🎉 Selamat datang di CashPOP versi 1.0.0!
+
+CashPOP hadir sebagai aplikasi mining saldo DANA pertama dengan pengalaman game yang seru dan penuh reward!
+
+✨ FITUR BARU:
+• Mining otomatis 24/7 — jalankan mining, kumpulkan saldo
+• Check-in harian dengan sistem streak reward (Rp200–Rp1.000)
+• Spin roda berhadiah harian — menangkan hingga Rp1.000 per putaran!
+• 4 paket Power Booster (Basic, Pro, Turbo, Ultra) dengan multiplier 2x–25x
+• Tugas harian dengan reward instan
+• Program referral — undang teman, dapatkan bonus Rp500/referral
+• Papan Peringkat Top 10 miner terbaik
+• Riwayat aktivitas mining lengkap
+• Penarikan saldo langsung ke DANA (min Rp10.000)
+• Notifikasi pengingat harian (check-in & mining)
+
+Unduh sekarang dan mulai mining saldo DANA kamu! 🚀
+
+Konten untuk Catatan Rilis (Bahasa Inggris):
+---------------------------------------------
+🎉 Welcome to CashPOP v1.0.0 — Your DANA Balance Mining App!
+
+NEW FEATURES:
+• 24/7 automatic mining — run mining, collect balance
+• Daily check-in with streak reward system (Rp200–Rp1,000)
+• Daily spin wheel — win up to Rp1,000 per spin!
+• 4 Power Booster packages (2x–25x multiplier)
+• Daily tasks with instant rewards
+• Referral program — invite friends, earn Rp500/referral
+• Top 10 Leaderboard
+• Complete mining activity history
+• Direct DANA withdrawal (min Rp10,000)
+• Daily reminder notifications
+
+────────────────────────────────────────────────────
+  VERSI 1.1.0 (Perencanaan Build Berikutnya)
+  Target Rilis: [TBD]
+  Status: DALAM PENGEMBANGAN
+────────────────────────────────────────────────────
+
+FITUR YANG DIRENCANAKAN:
+• Sistem pencapaian (achievement badge) — 12 badge reward
+• Upgrade permanent mining (CPU → GPU → ASIC)
+• Push notification lebih personal
+• Onboarding multi-step dengan animasi
+• Perbaikan bug berdasarkan laporan pengguna
+• Optimisasi performa loading
+• Dukungan bahasa Inggris
+
+PERBAIKAN BUG YANG DIRENCANAKAN:
+• [TBD berdasarkan laporan pengguna setelah rilis 1.0.0]
+
+────────────────────────────────────────────────────
+  TEMPLATE CATATAN RILIS (untuk versi mendatang)
+────────────────────────────────────────────────────
+
+VERSI X.X.X (Build: X)
+Tanggal: DD/MM/YYYY
+
+PERUBAHAN:
+[ ] Fitur baru: ...
+[ ] Perbaikan: ...
+[ ] Peningkatan: ...
+
+CATATAN TEKNIS:
+- versionCode: X
+- minSdkVersion: 23
+- targetSdkVersion: 34
+- Size APK: ~XX MB
+- Size AAB: ~XX MB
+
+======================================================
+END OF RELEASE NOTES
+======================================================

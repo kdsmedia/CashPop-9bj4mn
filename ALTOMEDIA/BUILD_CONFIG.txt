@@ -1,0 +1,202 @@
+======================================================
+  KONFIGURASI BUILD RESMI CASHPOP
+  Developer: ALTOMEDIA
+  Build System: EAS (Expo Application Services)
+======================================================
+
+========================================
+INFORMASI APLIKASI
+========================================
+
+App Name       : CashPOP
+Package Name   : com.altomedia.cashpop
+Version Name   : 1.0.0
+Version Code   : 1
+Min SDK        : 23 (Android 6.0 Marshmallow)
+Target SDK     : 34 (Android 14)
+Compile SDK    : 34
+
+========================================
+KEYSTORE INFORMASI
+========================================
+
+File           : ALTOMEDIA.jks
+Password       : Kdsmedia@123
+Key Alias      : kdsmedia
+Key Password   : Kdsmedia@123
+Validity       : 10000 hari
+Algorithm      : RSA 2048-bit
+
+DN (Distinguished Name):
+  CN=ALTOMEDIA
+  OU=Developer
+  O=ALTOMEDIA
+  L=Karawang
+  ST=Jawa Barat
+  C=ID
+
+========================================
+PERINTAH KEYTOOL
+========================================
+
+# Generate keystore baru:
+keytool -genkey -v \
+  -keystore ALTOMEDIA.jks \
+  -keyalg RSA \
+  -keysize 2048 \
+  -validity 10000 \
+  -alias kdsmedia \
+  -dname "CN=ALTOMEDIA, OU=Developer, O=ALTOMEDIA, L=Karawang, ST=Jawa Barat, C=ID" \
+  -storepass Kdsmedia@123 \
+  -keypass Kdsmedia@123
+
+# Verifikasi keystore:
+keytool -list -v -keystore ALTOMEDIA.jks -storepass Kdsmedia@123
+
+# Export certificate fingerprint (untuk Play Console):
+keytool -exportcert -alias kdsmedia -keystore ALTOMEDIA.jks \
+  -storepass Kdsmedia@123 | openssl sha1 -binary | openssl base64
+
+========================================
+EAS.JSON KONFIGURASI
+========================================
+
+{
+  "cli": {
+    "version": ">= 5.0.0"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "apk",
+        "credentialsSource": "local"
+      }
+    },
+    "production-aab": {
+      "android": {
+        "buildType": "app-bundle",
+        "credentialsSource": "local"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./pc-api-key.json",
+        "track": "production"
+      }
+    }
+  }
+}
+
+========================================
+CREDENTIALS.JSON (untuk EAS Local Credentials)
+========================================
+
+{
+  "android": {
+    "keystore": {
+      "keystorePath": "ALTOMEDIA.jks",
+      "keystorePassword": "Kdsmedia@123",
+      "keyAlias": "kdsmedia",
+      "keyPassword": "Kdsmedia@123"
+    }
+  }
+}
+
+Simpan sebagai: credentials.json di root project
+JANGAN commit file ini ke repository publik!
+
+========================================
+ADMOB CONFIGURATION
+========================================
+
+App ID      : ca-app-pub-6881903056221433~3325421892
+Banner      : ca-app-pub-6881903056221433/7424449002
+Interstitial: ca-app-pub-6881903056221433/7727701333
+Rewarded    : ca-app-pub-6881903056221433/1162292985
+
+Tambahkan ke AndroidManifest.xml:
+  <meta-data
+    android:name="com.google.android.gms.ads.APPLICATION_ID"
+    android:value="ca-app-pub-6881903456221433~3325421892"/>
+
+========================================
+ANDROID MANIFEST PERMISSIONS
+========================================
+
+Tambahkan ke android/app/src/main/AndroidManifest.xml:
+
+<uses-permission android:name="android.permission.INTERNET" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+<uses-permission android:name="android.permission.VIBRATE" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+========================================
+BUILD COMMANDS
+========================================
+
+# Development APK:
+eas build --platform android --profile development
+
+# Preview APK (untuk testing internal):
+eas build --platform android --profile preview
+
+# Production APK (untuk distribusi langsung):
+eas build --platform android --profile production
+
+# Production AAB (untuk Google Play Store - WAJIB):
+eas build --platform android --profile production-aab
+
+# Submit ke Google Play:
+eas submit --platform android --profile production
+
+========================================
+CHECKLIST SEBELUM BUILD PRODUKSI
+========================================
+
+[ ] app.json: version dan versionCode sudah diupdate
+[ ] app.json: minSdkVersion = 23, targetSdkVersion = 34
+[ ] Semua console.log sudah dihapus atau disabled
+[ ] __DEV__ checks sudah benar untuk AdMob
+[ ] ADMOB_IDS sudah menggunakan production IDs (bukan test IDs)
+[ ] Keystore sudah dibackup dengan aman
+[ ] Privacy Policy URL sudah valid dan dapat diakses
+[ ] Store listing assets sudah disiapkan
+[ ] Screenshot sudah dibuat dan di-crop dengan benar
+[ ] Feature graphic 1024x500 sudah disiapkan
+
+======================================================
+CATATAN KEAMANAN
+======================================================
+
+⚠️  PENTING:
+- Jangan commit file keystore (.jks) ke repository Git publik
+- Jangan commit file credentials.json ke repository Git publik
+- Simpan backup keystore di lokasi yang aman (Google Drive pribadi, USB terenkripsi)
+- Jika keystore hilang, TIDAK BISA melakukan update aplikasi yang sudah dirilis
+
+Tambahkan ke .gitignore:
+  ALTOMEDIA.jks
+  credentials.json
+  *.keystore
+  pc-api-key.json
+  google-services.json
+
+======================================================
+END OF BUILD CONFIG
+© 2025 ALTOMEDIA — altomediaindonesia@gmail.com
+======================================================

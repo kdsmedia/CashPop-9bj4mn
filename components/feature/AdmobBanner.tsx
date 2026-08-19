@@ -17,6 +17,7 @@ export function AdmobBanner() {
         unitId={adUnitId}
         size={BannerAdSize.BANNER}
         requestOptions={{ requestNonPersonalizedAdsOnly: false }}
+        onAdFailedToLoad={() => {}}
       />
     </View>
   );
@@ -27,6 +28,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.tabBg,
-    minHeight: 52,
+    minHeight: 50,
+    overflow: 'hidden',
   },
 });

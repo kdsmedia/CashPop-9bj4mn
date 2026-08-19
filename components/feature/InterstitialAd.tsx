@@ -8,42 +8,48 @@ import { ADMOB_IDS, INTERSTITIAL_INTERVAL_MS } from '@/constants/config';
 
 const adUnitId = __DEV__ ? TestIds.INTERSTITIAL : ADMOB_IDS.INTERSTITIAL;
 
+let adInstance: ReturnType<typeof InterstitialAd.createForAdRequest> | null = null;
+let adLoaded = false;
+
+function loadNewAd() {
+  try {
+    adLoaded = false;
+    adInstance = InterstitialAd.createForAdRequest(adUnitId, {
+      requestNonPersonalizedAdsOnly: false,
+    });
+    adInstance.addAdEventListener(AdEventType.LOADED, () => {
+      adLoaded = true;
+    });
+    adInstance.addAdEventListener(AdEventType.CLOSED, () => {
+      adLoaded = false;
+      adInstance = null;
+      setTimeout(loadNewAd, 2000);
+    });
+    adInstance.addAdEventListener(AdEventType.ERROR, () => {
+      adLoaded = false;
+      adInstance = null;
+      setTimeout(loadNewAd, 30000);
+    });
+    adInstance.load();
+  } catch {}
+}
+
 export function useInterstitialAd() {
-  const interstitialRef = useRef<any>(null);
   const lastShownRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  const loadAd = () => {
-    try {
-      const ad = InterstitialAd.createForAdRequest(adUnitId, {
-        requestNonPersonalizedAdsOnly: false,
-      });
-
-      const unsubLoaded = ad.addAdEventListener(AdEventType.LOADED, () => {
-        interstitialRef.current = ad;
-      });
-
-      const unsubClosed = ad.addAdEventListener(AdEventType.CLOSED, () => {
-        interstitialRef.current = null;
-        loadAd(); // preload next
-      });
-
-      ad.load();
-    } catch {}
-  };
 
   const showIfReady = () => {
     const now = Date.now();
     if (now - lastShownRef.current < INTERSTITIAL_INTERVAL_MS) return;
-    if (!interstitialRef.current) return;
+    if (!adInstance || !adLoaded) return;
     try {
-      interstitialRef.current.show();
+      adInstance.show();
       lastShownRef.current = now;
     } catch {}
   };
 
   useEffect(() => {
-    loadAd();
+    loadNewAd();
     timerRef.current = setInterval(() => {
       showIfReady();
     }, 60 * 1000);

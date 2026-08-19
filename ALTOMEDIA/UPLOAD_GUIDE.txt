@@ -1,0 +1,256 @@
+======================================================
+  PANDUAN UPLOAD RILIS & LISTING CASHPOP DI PLAYSTORE
+  Dikompilasi oleh: ALTOMEDIA
+  Package: com.altomedia.cashpop
+======================================================
+
+========================================
+BAGIAN 1: PERSIAPAN BUILD
+========================================
+
+[A] KONFIGURASI KEYSTORE
+--------------------------
+File keystore  : ALTOMEDIA.jks
+Keystore Pass  : Kdsmedia@123
+Alias          : kdsmedia
+Key Password   : Kdsmedia@123
+Validity       : 10000 hari
+
+Generate keystore (jalankan 1x saja):
+keytool -genkey -v -keystore ALTOMEDIA.jks -keyalg RSA -keysize 2048 -validity 10000 -alias kdsmedia
+
+Isi data saat diminta:
+  First/Last Name   : ALTOMEDIA
+  Org Unit          : Developer
+  Organization      : ALTOMEDIA
+  City              : Karawang
+  State             : Jawa Barat
+  Country Code      : ID
+
+[B] EAS BUILD (Expo Application Services)
+------------------------------------------
+1. Install EAS CLI:
+   npm install -g eas-cli
+
+2. Login ke akun Expo:
+   eas login
+
+3. Configure EAS (buat eas.json di root project):
+   {
+     "cli": { "version": ">= 5.0.0" },
+     "build": {
+       "production": {
+         "android": {
+           "buildType": "apk",
+           "gradleCommand": ":app:assembleRelease"
+         }
+       },
+       "production-aab": {
+         "android": {
+           "buildType": "app-bundle"
+         }
+       }
+     },
+     "submit": {
+       "production": {
+         "android": { "serviceAccountKeyPath": "./pc-api-key.json" }
+       }
+     }
+   }
+
+4. Build APK:
+   eas build --platform android --profile production
+
+5. Build AAB (untuk Play Store):
+   eas build --platform android --profile production-aab
+
+[C] BUILD MANUAL DENGAN GRADLE (Alternatif)
+---------------------------------------------
+# Pastikan di root project React Native / Expo bare workflow:
+
+# Generate keystore (jika belum ada):
+keytool -genkey -v -keystore android/app/ALTOMEDIA.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias kdsmedia
+
+# Tambahkan ke android/gradle.properties:
+MYAPP_UPLOAD_STORE_FILE=ALTOMEDIA.jks
+MYAPP_UPLOAD_KEY_ALIAS=kdsmedia
+MYAPP_UPLOAD_STORE_PASSWORD=Kdsmedia@123
+MYAPP_UPLOAD_KEY_PASSWORD=Kdsmedia@123
+
+# Build AAB:
+cd android && ./gradlew bundleRelease
+
+# Build APK:
+cd android && ./gradlew assembleRelease
+
+# Output lokasi file:
+# AAB: android/app/build/outputs/bundle/release/app-release.aab
+# APK: android/app/build/outputs/apk/release/app-release.apk
+
+========================================
+BAGIAN 2: PERSYARATAN SDK
+========================================
+
+Min SDK Version     : 23 (Android 6.0 Marshmallow)
+Target SDK Version  : 34 (Android 14)
+Compile SDK         : 34
+
+Konfigurasi di app.json:
+  "minSdkVersion": 23
+  "targetSdkVersion": 34
+  "compileSdkVersion": 34
+
+Catatan: Google Play mewajibkan targetSdk >= 34 mulai
+Agustus 2024. Pastikan selalu update sesuai kebijakan
+terbaru Google Play.
+
+========================================
+BAGIAN 3: GRAFIK & ASET YANG DIBUTUHKAN
+========================================
+
+1. ICON APLIKASI (wajib)
+   - Resolusi: 512 x 512 px
+   - Format: PNG 32-bit (dengan alpha)
+   - File: assets/images/icon.png (sudah ada)
+   - Background: Tidak transparan untuk adaptive icon
+
+2. FEATURE GRAPHIC (wajib di Play Store)
+   - Resolusi: 1024 x 500 px
+   - Format: JPG atau PNG 24-bit (tanpa alpha)
+   - File: ALTOMEDIA/graphics/feature_graphic.jpg
+   - Konten: Tampilkan nama app + visual menarik
+
+3. SCREENSHOT PONSEL (wajib, min 2 - maks 8)
+   - Resolusi minimal: 320 x 320 px
+   - Rasio: 16:9 (landscape) atau 9:16 (portrait)
+   - Format: JPG atau PNG
+   - Disarankan: 1080 x 1920 px (portrait)
+   - Files: ALTOMEDIA/screenshots/mobile_*.jpg
+
+4. SCREENSHOT TABLET 7-inch (opsional)
+   - Resolusi minimal: 320 x 320 px
+   - Format: JPG atau PNG
+
+5. VIDEO PROMO (opsional)
+   - YouTube URL (unlisted atau public)
+   - Durasi: 30 detik - 2 menit
+
+========================================
+BAGIAN 4: SETUP PLAY CONSOLE
+========================================
+
+[LANGKAH 1] Buat Akun Developer Google Play
+  URL: https://play.google.com/console
+  Biaya pendaftaran: USD $25 (sekali bayar)
+  Gunakan akun Google: altomediaindonesia@gmail.com
+
+[LANGKAH 2] Buat Aplikasi Baru
+  - Klik "Buat Aplikasi"
+  - Pilih bahasa default: Bahasa Indonesia
+  - Jenis aplikasi: Aplikasi (bukan Game — atau pilih Game jika sesuai)
+  - Berbayar/gratis: Gratis
+  - Centang: Deklarasi Developer dan Kebijakan
+
+[LANGKAH 3] Isi Store Listing
+  a. Detail Produk:
+     - Nama Aplikasi: CashPOP
+     - Deskripsi Singkat: (maks 80 karakter)
+       "Mining saldo DANA otomatis dengan reward harian & spin roda berhadiah"
+     - Deskripsi Lengkap: (maks 4000 karakter) — lihat file STORE_LISTING.txt
+  
+  b. Grafik:
+     - Upload ikon 512x512
+     - Upload feature graphic 1024x500
+     - Upload min 2 screenshot ponsel
+
+  c. Kategori:
+     - Kategori aplikasi: Kasual (atau Finance/Game)
+     - Tag: reward, penghasilan, dana, mining, game
+
+[LANGKAH 4] Konten Aplikasi
+  a. Kebijakan Privasi:
+     - URL wajib diisi
+     - Hosting: Simpan teks PRIVACY_POLICY.md di GitHub Pages atau site Anda
+     - URL contoh: https://altomedia.github.io/cashpop/privacy-policy
+
+  b. Akses Aplikasi:
+     - Semua fungsi dapat diakses tanpa login
+     - Catatan: Perlu nomor DANA untuk mendaftar
+
+  c. Konten Iklan:
+     - Apakah berisi iklan: YA (Google AdMob)
+
+  d. Target Audiens:
+     - Usia minimum: 18 tahun dan ke atas
+     - Jangan centang "Anak-anak" dalam target
+
+  e. Rating Konten:
+     - Lengkapi kuesioner rating IARC
+     - Kategori: Everyone / Teen (tergantung kuesioner)
+
+[LANGKAH 5] Pembayaran (jika ada pembelian in-app)
+  - Saat ini CashPOP tidak memiliki pembelian in-app berbayar
+  - Jika ditambahkan di masa depan, setup di bagian Monetisasi
+
+[LANGKAH 6] Rilis Aplikasi
+  a. Buat Rilis Produksi:
+     - Navigasi: Rilis > Produksi > Buat Rilis Baru
+  
+  b. Signing Aplikasi:
+     - Pilih: "Masuk ke App Signing by Google Play" (direkomendasikan)
+     - Atau upload keystore sendiri
+
+  c. Upload AAB:
+     - Upload file .aab yang sudah dibuild
+  
+  d. Catatan Rilis:
+     - Isi catatan rilis versi 1.0.0 (lihat RELEASE_NOTES.txt)
+
+  e. Review dan Publikasi:
+     - Klik "Simpan" lalu "Mulai Peluncuran ke Produksi"
+     - Proses review: 3-7 hari kerja
+
+========================================
+BAGIAN 5: ADMOB SETUP
+========================================
+
+App ID     : ca-app-pub-6881903056221433~3325421892
+Banner     : ca-app-pub-6881903056221433/7424449002
+Interstitial: ca-app-pub-6881903056221433/7727701333
+Rewarded   : ca-app-pub-6881903056221433/1162292985
+
+Langkah integrasi:
+1. Pastikan google-services.json sudah ada di android/app/
+2. Tambahkan di AndroidManifest.xml:
+   <meta-data
+     android:name="com.google.android.gms.ads.APPLICATION_ID"
+     android:value="ca-app-pub-6881903056221433~3325421892"/>
+3. Inisialisasi di kode: MobileAds.initialize()
+4. Pastikan koneksi AdMob sudah terhubung ke Play Console
+
+========================================
+BAGIAN 6: PASCA PUBLIKASI
+========================================
+
+1. Monitor Force Stop / Crash:
+   - Play Console > Android Vitals > Crash & ANR
+   
+2. Monitor Rating:
+   - Play Console > Ulasan
+
+3. Update Rutin:
+   - Tambahkan versionCode tiap build baru
+   - Update targetSdk sesuai requirement Google Play terbaru
+
+4. Laporan Keuangan (jika ada revenue AdMob):
+   - AdMob Console > Laporan
+
+5. A/B Testing Store Listing (opsional):
+   - Play Console > Rilis > Eksperimen Store Listing
+
+======================================================
+END OF UPLOAD GUIDE
+© 2025 ALTOMEDIA — altomediaindonesia@gmail.com
+======================================================

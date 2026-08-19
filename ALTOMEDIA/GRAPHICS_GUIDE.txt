@@ -1,0 +1,163 @@
+======================================================
+  PANDUAN GRAFIK & ASET VISUAL CASHPOP
+  Untuk Google Play Store & Distribusi
+  Developer: ALTOMEDIA
+======================================================
+
+========================================
+DAFTAR ASET YANG DIBUTUHKAN
+========================================
+
+STATUS ASET:
+[✅] = Sudah ada
+[❌] = Perlu dibuat
+[📋] = Perlu disiapkan
+
+[✅] App Icon          : assets/images/icon.png (512x512)
+[❌] Feature Graphic   : ALTOMEDIA/graphics/feature_graphic.jpg (1024x500)
+[❌] Screenshot 1      : Halaman Mining dengan animasi aktif
+[❌] Screenshot 2      : Halaman Tugas dengan check-in & spin
+[❌] Screenshot 3      : Halaman Booster dengan 4 paket
+[❌] Screenshot 4      : Halaman Dompet dengan saldo
+[❌] Screenshot 5      : Halaman Leaderboard
+[❌] Screenshot 6      : Splash Screen loading
+
+========================================
+SPESIFIKASI TEKNIS WAJIB
+========================================
+
+1. APP ICON (Sudah tersedia)
+   File  : assets/images/icon.png
+   Size  : 512 × 512 px (wajib)
+   Format: PNG-32 dengan transparansi
+   Notes : Gambar sudah ada di project
+
+2. FEATURE GRAPHIC (Wajib di Play Store)
+   Size  : 1024 × 500 px PERSIS
+   Format: JPG atau PNG-24 (TANPA alpha/transparansi)
+   DPI   : 72 dpi
+   
+   Konten yang disarankan:
+   - Background: Dark navy (#07071A) atau gradient biru gelap
+   - Tampilkan logo CashPOP di tengah/kiri
+   - Tagline: "Mining Saldo DANA Otomatis"
+   - Elemen visual: koin Rp, animasi mining, bintang
+   - Warna dominan: Emas (#FFD700) + Hijau Neon (#00FF7F)
+   - Jangan sertakan teks harga atau klaim berlebihan
+   - Tidak boleh ada elemen UI Play Store (badge, dll)
+
+3. SCREENSHOT PONSEL
+   Format: JPG atau PNG-24
+   Resolusi minimal: 320 × 320 px
+   Resolusi DISARANKAN: 1080 × 1920 px (portrait 9:16)
+   Maksimal: 3840 × 2160 px
+   Jumlah: Minimum 2, Maximum 8
+   
+   PENTING:
+   - Semua screenshot harus rasio yang SAMA
+   - Tidak boleh ada tepi hitam/border device
+   - Tidak boleh ada watermark
+   - Harus menampilkan fitur aplikasi yang nyata
+
+========================================
+PANDUAN KONTEN SCREENSHOT
+========================================
+
+SCREENSHOT 1 — Mining Screen (UTAMA)
+Tampilkan:
+- Header CashPOP dengan saldo
+- Orb mining yang berputar dengan efek partikel
+- Status MINING AKTIF (hijau)
+- Hash rate & multiplier stats
+- Tombol STOP berwarna merah
+- Beberapa entri riwayat aktivitas
+Caption: "Mining otomatis 24/7 — Saldo terus bertambah!"
+
+SCREENSHOT 2 — Spin Wheel Modal
+Tampilkan:
+- Roda spin dengan 8 sektor warna-warni
+- Pointer emas di atas roda
+- Tombol PUTAR SEKARANG
+- Tampilan hadiah-hadiah tersedia
+Caption: "Spin roda harian — Menangkan hingga Rp1.000!"
+
+SCREENSHOT 3 — Tasks Screen
+Tampilkan:
+- Badge streak api (contoh: 7 hari streak)
+- Card check-in harian
+- Card aktivitas harian dengan progress bar
+- Card undang teman dengan kode referral
+Caption: "Tugas harian penuh reward — Check-in, aktivitas, & referral!"
+
+SCREENSHOT 4 — Booster Screen
+Tampilkan:
+- Grid 2×2 dari 4 paket booster
+- Basic, Pro, Turbo, Ultra Miner
+- Multiplier rates (2×, 5×, 10×, 25×)
+- Harga mulai dari Rp10.000
+Caption: "4 Power Booster — Percepat mining hingga 25×!"
+
+SCREENSHOT 5 — Leaderboard
+Tampilkan:
+- Podium Top 3 dengan badge emas/perak/perunggu
+- Daftar Top 10 miner
+- Posisi pengguna dengan highlight khusus
+Caption: "Bersaing di papan peringkat — Buktikan kamu yang terbaik!"
+
+SCREENSHOT 6 — Wallet/Withdraw Screen
+Tampilkan:
+- Balance card dengan saldo besar
+- Progress bar syarat penarikan
+- Form penarikan ke DANA
+- Kode referral yang bisa dibagikan
+Caption: "Tarik saldo langsung ke DANA — Mudah & transparan!"
+
+========================================
+TOOLS YANG DISARANKAN
+========================================
+
+Untuk membuat Feature Graphic & Screenshot Frame:
+1. Canva (canva.com) — Gratis, template tersedia
+2. Adobe Photoshop / Illustrator — Profesional
+3. Figma (figma.com) — Gratis untuk basic
+4. Adobe Express (express.adobe.com) — Gratis
+
+Template ukuran di Canva:
+- Feature Graphic: Custom 1024×500 px
+- Screenshot: Custom 1080×1920 px
+
+Warna Palette CashPOP:
+- Background Dark: #07071A
+- Background Card: #10102E
+- Gold/Primary: #FFD700
+- Green/Accent: #00FF7F
+- Purple: #8B5CF6
+- Orange: #FF8C42
+
+Font yang digunakan:
+- Judul: Lilita One (Google Fonts)
+- Tombol: Fredoka Bold (Google Fonts)
+- Teks: Baloo 2 (Google Fonts)
+
+========================================
+CHECKLIST ASET PLAY STORE
+========================================
+
+Wajib:
+[ ] App Icon 512×512 PNG ✅ (sudah ada)
+[ ] Feature Graphic 1024×500 JPG/PNG
+[ ] Min 2 Screenshot Ponsel 9:16
+
+Sangat Disarankan:
+[ ] 4-6 Screenshot Ponsel
+[ ] Video Promo 30-120 detik (YouTube URL)
+[ ] Screenshot Tablet 7"
+
+Opsional:
+[ ] Screenshot Tablet 10"
+[ ] Promotional Text (maks 170 karakter)
+
+======================================================
+END OF GRAPHICS GUIDE
+© 2025 ALTOMEDIA — altomediaindonesia@gmail.com
+======================================================

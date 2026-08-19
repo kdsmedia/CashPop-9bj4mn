@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "CashPoP",
+    "name": "CashPOP",
     "slug": "cashpop",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,9 +8,15 @@
     "scheme": "cashpop",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#07071A"
+    },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.altomedia.cashpop"
+      "supportsTablet": false,
+      "bundleIdentifier": "com.altomedia.cashpop",
+      "buildNumber": "1"
     },
     "android": {
       "adaptiveIcon": {
@@ -18,7 +24,16 @@
         "backgroundColor": "#07071A"
       },
       "package": "com.altomedia.cashpop",
-      "googleServicesFile": "./google-services.json"
+      "versionCode": 1,
+      "minSdkVersion": 23,
+      "targetSdkVersion": 34,
+      "compileSdkVersion": 34,
+      "permissions": [
+        "INTERNET",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -31,12 +46,24 @@
         "expo-notifications",
         {
           "icon": "./assets/images/icon.png",
-          "color": "#FFD700"
+          "color": "#FFD700",
+          "sounds": []
+        }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": []
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "cashpop-altomedia"
+      }
     }
   }
 }

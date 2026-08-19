@@ -11,7 +11,7 @@ import {
   getTodayString,
   calculateStreak,
   getStreakReward,
-  addHistoryItem,
+  saveHistory,
   loadHistory,
 } from '@/services/gameService';
 import {
@@ -59,34 +59,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setMiningHistory(history);
       setIsLoading(false);
       if (data.notificationsEnabled) {
-        setupNotifications();
+        setupNotifications().catch(() => {});
       }
     });
   }, []);
 
-  useEffect(() => {
-    if (user.miningActive) {
-      startMiningTick();
-    }
-    return () => {
-      if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
-    };
-  }, [user.miningActive, user.activeBoosters]);
-
-  const appendHistory = useCallback(async (item: Omit<MiningHistoryItem, 'id' | 'timestamp'>) => {
-    setMiningHistory((prev) => {
-      const newItem: MiningHistoryItem = {
-        ...item,
-        id: `hist_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-        timestamp: Date.now(),
-      };
-      const updated = [...prev, newItem].slice(-30);
-      addHistoryItem(prev, item);
-      return updated;
-    });
-  }, []);
-
-  const startMiningTick = useCallback(() => {
+  const startMiningTick = useCallback((userData?: UserData) => {
     if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
     miningIntervalRef.current = setInterval(() => {
       const now = Date.now();
@@ -114,6 +92,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }, 3000);
   }, []);
 
+  useEffect(() => {
+    if (user.miningActive) {
+      startMiningTick(user);
+    } else {
+      if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
+      setCurrentHashRate(0);
+      setCurrentMultiplier(1);
+    }
+    return () => {
+      if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
+    };
+  }, [user.miningActive]);
+
+  const appendHistory = useCallback(async (item: Omit<MiningHistoryItem, 'id' | 'timestamp'>) => {
+    const newItem: MiningHistoryItem = {
+      ...item,
+      id: `hist_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+      timestamp: Date.now(),
+    };
+    setMiningHistory((prev) => {
+      const updated = [...prev, newItem].slice(-30);
+      saveHistory(updated);
+      return updated;
+    });
+  }, []);
+
   const setupUser = useCallback(async (danaNumber: string, invitedBy?: string) => {
     const referralCode = generateReferralCode(danaNumber);
     const now = Date.now();
@@ -128,7 +132,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     };
     await saveUserData(newUser);
     setUser(newUser);
-    await setupNotifications();
+    await setupNotifications().catch(() => {});
   }, []);
 
   const startMining = useCallback(() => {
@@ -142,40 +146,43 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const stopMining = useCallback(() => {
     if (miningIntervalRef.current) clearInterval(miningIntervalRef.current);
+    setCurrentHashRate(0);
+    setCurrentMultiplier(1);
     setUser((prev) => {
       const updated = { ...prev, miningActive: false };
       saveUserData(updated);
       return updated;
     });
-    setCurrentHashRate(0);
     appendHistory({ type: 'stop', label: 'Mining dihentikan', icon: 'stop-circle', color: '#FF4757' });
   }, [appendHistory]);
 
   const claimCheckin = useCallback(async (): Promise<number> => {
-    let reward = 200;
-    setUser((prev) => {
-      const newStreak = calculateStreak(prev.checkinStreak, prev.lastStreakDate);
-      reward = getStreakReward(newStreak);
-      const updated = {
-        ...prev,
-        balance: prev.balance + reward,
-        totalEarned: prev.totalEarned + reward,
-        lastCheckinDate: getTodayString(),
-        checkinStreak: newStreak,
-        lastStreakDate: getTodayString(),
-      };
-      saveUserData(updated);
-      return updated;
+    return new Promise<number>((resolve) => {
+      setUser((prev) => {
+        const newStreak = calculateStreak(prev.checkinStreak, prev.lastStreakDate);
+        const reward = getStreakReward(newStreak);
+        const updated = {
+          ...prev,
+          balance: prev.balance + reward,
+          totalEarned: prev.totalEarned + reward,
+          lastCheckinDate: getTodayString(),
+          checkinStreak: newStreak,
+          lastStreakDate: getTodayString(),
+        };
+        saveUserData(updated);
+        setTimeout(() => {
+          appendHistory({
+            type: 'checkin',
+            label: `Check-in harian (streak ${newStreak})`,
+            amount: reward,
+            icon: 'event-available',
+            color: '#00FF7F',
+          });
+          resolve(reward);
+        }, 0);
+        return updated;
+      });
     });
-    await new Promise((r) => setTimeout(r, 50));
-    appendHistory({
-      type: 'checkin',
-      label: `Check-in harian`,
-      amount: reward,
-      icon: 'event-available',
-      color: '#00FF7F',
-    });
-    return reward;
   }, [appendHistory]);
 
   const claimSpin = useCallback(async (amount: number, type: string, value: number) => {
@@ -223,7 +230,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveUserData(updated);
       return updated;
     });
-    appendHistory({ type: 'reward', label: `Reward aktivitas`, amount: reward, icon: 'stars', color: '#FFD700' });
+    appendHistory({ type: 'reward', label: 'Reward aktivitas harian', amount: reward, icon: 'stars', color: '#FFD700' });
     return reward;
   }, [appendHistory]);
 
@@ -249,74 +256,73 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     hours: number,
     cost: number
   ): Promise<boolean> => {
-    let success = false;
-    let boosterRef: ActiveBooster | null = null;
-    setUser((prev) => {
-      if (prev.balance < cost) return prev;
-      const booster: ActiveBooster = {
-        id: `${boosterId}_${Date.now()}`,
-        boosterId,
-        multiplier,
-        expiresAt: Date.now() + hours * 3600000,
-      };
-      boosterRef = booster;
-      const updated = {
-        ...prev,
-        balance: prev.balance - cost,
-        activeBoosters: [...prev.activeBoosters, booster],
-      };
-      saveUserData(updated);
-      success = true;
-      return updated;
-    });
-    await new Promise((r) => setTimeout(r, 50));
-    if (success && boosterRef) {
-      appendHistory({
-        type: 'booster',
-        label: `Booster ${boosterId} aktif ${hours}j`,
-        amount: cost,
-        icon: 'bolt',
-        color: '#FF8C42',
+    return new Promise<boolean>((resolve) => {
+      setUser((prev) => {
+        if (prev.balance < cost) {
+          setTimeout(() => resolve(false), 0);
+          return prev;
+        }
+        const booster: ActiveBooster = {
+          id: `${boosterId}_${Date.now()}`,
+          boosterId,
+          multiplier,
+          expiresAt: Date.now() + hours * 3600000,
+        };
+        const updated = {
+          ...prev,
+          balance: prev.balance - cost,
+          activeBoosters: [...prev.activeBoosters, booster],
+        };
+        saveUserData(updated);
+        setTimeout(() => {
+          appendHistory({
+            type: 'booster',
+            label: `Booster ${boosterId} aktif ${hours}j`,
+            amount: cost,
+            icon: 'bolt',
+            color: '#FF8C42',
+          });
+          if (prev.notificationsEnabled) {
+            scheduleBoosterExpiryReminder(booster.id, boosterId, booster.expiresAt).catch(() => {});
+          }
+          resolve(true);
+        }, 0);
+        return updated;
       });
-      if (user.notificationsEnabled) {
-        scheduleBoosterExpiryReminder(boosterRef.id, boosterId, boosterRef.expiresAt);
-      }
-    }
-    return success;
-  }, [appendHistory, user.notificationsEnabled]);
+    });
+  }, [appendHistory]);
 
   const requestWithdrawal = useCallback(async (
     amount: number
   ): Promise<{ success: boolean; message: string }> => {
-    const today = getTodayString();
-    let result = { success: false, message: '' };
-    setUser((prev) => {
-      if (prev.balance < amount || amount < 10000) {
-        result = { success: false, message: 'Saldo tidak mencukupi' };
-        return prev;
-      }
-      if (prev.lastWithdrawalDate === today) {
-        result = { success: false, message: 'Penarikan hanya 1× per hari' };
-        return prev;
-      }
-      if (prev.totalAdsWatched < 350) {
-        result = { success: false, message: `Butuh ${350 - prev.totalAdsWatched} aktivitas lagi` };
-        return prev;
-      }
-      const updated = {
-        ...prev,
-        balance: prev.balance - amount,
-        lastWithdrawalDate: today,
-      };
-      saveUserData(updated);
-      result = { success: true, message: `Penarikan Rp${amount.toLocaleString('id')} berhasil dikirim ke ${prev.danaNumber}` };
-      return updated;
+    return new Promise((resolve) => {
+      const today = getTodayString();
+      setUser((prev) => {
+        if (prev.balance < amount || amount < 10000) {
+          setTimeout(() => resolve({ success: false, message: 'Saldo tidak mencukupi' }), 0);
+          return prev;
+        }
+        if (prev.lastWithdrawalDate === today) {
+          setTimeout(() => resolve({ success: false, message: 'Penarikan hanya 1x per hari' }), 0);
+          return prev;
+        }
+        if (prev.totalAdsWatched < 350) {
+          setTimeout(() => resolve({ success: false, message: `Butuh ${350 - prev.totalAdsWatched} aktivitas lagi` }), 0);
+          return prev;
+        }
+        const updated = {
+          ...prev,
+          balance: prev.balance - amount,
+          lastWithdrawalDate: today,
+        };
+        saveUserData(updated);
+        setTimeout(() => {
+          appendHistory({ type: 'withdraw', label: 'Tarik saldo', amount, icon: 'send', color: '#FF6B9D' });
+          resolve({ success: true, message: `Penarikan Rp${amount.toLocaleString('id')} berhasil dikirim ke ${prev.danaNumber}` });
+        }, 0);
+        return updated;
+      });
     });
-    await new Promise((r) => setTimeout(r, 50));
-    if (result.success) {
-      appendHistory({ type: 'withdraw', label: `Tarik saldo`, amount, icon: 'send', color: '#FF6B9D' });
-    }
-    return result;
   }, [appendHistory]);
 
   const refreshUser = useCallback(async () => {
@@ -331,10 +337,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       return updated;
     });
     if (enabled) {
-      await scheduleCheckinReminder();
-      await scheduleMiningReminder();
+      await scheduleCheckinReminder().catch(() => {});
+      await scheduleMiningReminder().catch(() => {});
     } else {
-      await cancelAllNotifications();
+      await cancelAllNotifications().catch(() => {});
     }
   }, []);
 

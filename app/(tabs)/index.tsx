@@ -6,8 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Animated,
-  Easing,
-  FlatList,
   Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,6 +46,39 @@ const HISTORY_ICONS: Record<string, { icon: string; color: string }> = {
   withdraw: { icon: 'send', color: '#FF6B9D' },
 };
 
+function HistoryItem({ item, index }: { item: any; index: number }) {
+  const fadeIn = useRef(new Animated.Value(0)).current;
+  const slideIn = useRef(new Animated.Value(-20)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(fadeIn, { toValue: 1, duration: 350, delay: index * 40, useNativeDriver: true }),
+      Animated.timing(slideIn, { toValue: 0, duration: 350, delay: index * 40, useNativeDriver: true }),
+    ]).start();
+  }, []);
+
+  const iconData = HISTORY_ICONS[item.type] || { icon: 'info', color: Colors.primary };
+
+  return (
+    <Animated.View style={[styles.historyItem, { opacity: fadeIn, transform: [{ translateX: slideIn }] }]}>
+      <LinearGradient colors={['#10102E', '#161640']} style={styles.historyItemGrad}>
+        <View style={[styles.histIcon, { backgroundColor: iconData.color + '20' }]}>
+          <MaterialIcons name={iconData.icon as any} size={16} color={iconData.color} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.histLabel}>{item.label}</Text>
+          <Text style={styles.histTime}>{formatTimestamp(item.timestamp)}</Text>
+        </View>
+        {item.amount !== undefined && (
+          <Text style={[styles.histAmount, { color: item.type === 'withdraw' || item.type === 'booster' ? Colors.error : Colors.accent }]}>
+            {item.type === 'withdraw' || item.type === 'booster' ? `-${formatRupiah(item.amount)}` : `+${formatRupiah(item.amount)}`}
+          </Text>
+        )}
+      </LinearGradient>
+    </Animated.View>
+  );
+}
+
 export default function MiningScreen() {
   const { user, currentHashRate, currentMultiplier, startMining, stopMining, miningHistory } = useApp();
   const insets = useSafeAreaInsets();
@@ -58,13 +89,10 @@ export default function MiningScreen() {
   const cardAnim = useRef(new Animated.Value(40)).current;
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Animated values for new history items
-  const [histItemAnims] = useState<Record<string, Animated.Value>>({});
-
   const HEX = '0123456789abcdef';
-  const BINARY = '01';
-  const randomHash = () => Array.from({ length: 24 }, () => HEX[Math.floor(Math.random() * 16)]).join('');
-  const randomBinary = () => Array.from({ length: 8 }, () => BINARY[Math.floor(Math.random() * 2)]).join('');
+
+  const randomHash = () =>
+    Array.from({ length: 24 }, () => HEX[Math.floor(Math.random() * 16)]).join('');
 
   useEffect(() => {
     Animated.parallel([
@@ -82,7 +110,9 @@ export default function MiningScreen() {
       if (intervalRef.current) clearInterval(intervalRef.current);
       setHashDisplay('000000000000000000000000');
     }
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, [user.miningActive]);
 
   useEffect(() => {
@@ -112,8 +142,8 @@ export default function MiningScreen() {
             <View style={styles.headerLeft}>
               <Image source={require('@/assets/images/icon.png')} style={styles.logoSmall} resizeMode="contain" />
               <View>
-                <Text style={styles.appTitle}>CashPoP</Text>
-                <Text style={styles.danaNum}>{user.danaNumber}</Text>
+                <Text style={styles.appTitle}>CashPOP</Text>
+                <Text style={styles.danaNum}>{user.danaNumber || 'Belum terdaftar'}</Text>
               </View>
             </View>
             <View style={styles.balanceBadge}>
@@ -136,7 +166,7 @@ export default function MiningScreen() {
             {activeBoosters.length > 0 && (
               <View style={styles.boostBadge}>
                 <MaterialIcons name="bolt" size={12} color="#000" />
-                <Text style={styles.boostBadgeText}>{currentMultiplier}×</Text>
+                <Text style={styles.boostBadgeText}>{currentMultiplier}x</Text>
               </View>
             )}
           </View>
@@ -162,7 +192,7 @@ export default function MiningScreen() {
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <MaterialIcons name="trending-up" size={20} color={Colors.accent} />
-              <Text style={styles.statValue}>{currentMultiplier}×</Text>
+              <Text style={styles.statValue}>{currentMultiplier}x</Text>
               <Text style={styles.statLabel}>Multiplier</Text>
             </View>
             <View style={styles.statDivider} />
@@ -206,7 +236,7 @@ export default function MiningScreen() {
               const mins = Math.floor((remaining % 3600000) / 60000);
               return (
                 <View key={ab.id} style={styles.activeBoosterChip}>
-                  <MaterialIcons name={bDef?.icon as any || 'bolt'} size={14} color={bDef?.color || Colors.primary} />
+                  <MaterialIcons name={(bDef?.icon as any) || 'bolt'} size={14} color={bDef?.color || Colors.primary} />
                   <Text style={styles.activeBoosterName}>{bDef?.name || 'Booster'}</Text>
                   <Text style={styles.activeBoosterTime}>{hours}j {mins}m</Text>
                 </View>
@@ -220,7 +250,7 @@ export default function MiningScreen() {
       <View style={styles.summaryGrid}>
         {[
           { label: 'Total Penghasilan', value: formatRupiah(user.totalEarned), icon: 'payments', color: Colors.primary },
-          { label: 'Aktivitas', value: `${user.totalAdsWatched}/350`, icon: 'ondemand-video', color: Colors.accent },
+          { label: 'Aktivitas', value: `${user.totalAdsWatched}/350`, icon: 'assignment-turned-in', color: Colors.accent },
           { label: 'Referral', value: `${user.referralCount} orang`, icon: 'group-add', color: Colors.purple },
           { label: 'Streak', value: `${user.checkinStreak} hari`, icon: 'local-fire-department', color: Colors.orange },
         ].map((item) => (
@@ -239,31 +269,9 @@ export default function MiningScreen() {
         <View style={styles.historySection}>
           <Text style={styles.sectionTitle}>Riwayat Aktivitas</Text>
           <View style={styles.historyList}>
-            {reversedHistory.slice(0, 15).map((item, idx) => {
-              const iconData = HISTORY_ICONS[item.type] || { icon: 'info', color: Colors.primary };
-              const fadeIn = useRef(new Animated.Value(0)).current;
-              useEffect(() => {
-                Animated.timing(fadeIn, { toValue: 1, duration: 350, delay: idx * 40, useNativeDriver: true }).start();
-              }, []);
-              return (
-                <Animated.View key={item.id} style={[styles.historyItem, { opacity: fadeIn, transform: [{ translateX: fadeIn.interpolate({ inputRange: [0, 1], outputRange: [-20, 0] }) }] }]}>
-                  <LinearGradient colors={['#10102E', '#161640']} style={styles.historyItemGrad}>
-                    <View style={[styles.histIcon, { backgroundColor: iconData.color + '20' }]}>
-                      <MaterialIcons name={iconData.icon as any} size={16} color={iconData.color} />
-                    </View>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.histLabel}>{item.label}</Text>
-                      <Text style={styles.histTime}>{formatTimestamp(item.timestamp)}</Text>
-                    </View>
-                    {item.amount !== undefined && (
-                      <Text style={[styles.histAmount, { color: item.type === 'withdraw' || item.type === 'booster' ? Colors.error : Colors.accent }]}>
-                        {item.type === 'withdraw' || item.type === 'booster' ? `-${formatRupiah(item.amount)}` : `+${formatRupiah(item.amount)}`}
-                      </Text>
-                    )}
-                  </LinearGradient>
-                </Animated.View>
-              );
-            })}
+            {reversedHistory.slice(0, 15).map((item, idx) => (
+              <HistoryItem key={item.id} item={item} index={idx} />
+            ))}
           </View>
         </View>
       )}
