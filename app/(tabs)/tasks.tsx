@@ -352,7 +352,7 @@ export default function TasksScreen() {
           <View style={styles.infoCard}>
             <MaterialIcons name="info-outline" size={18} color={Colors.info} />
             <Text style={styles.infoText}>
-              Total aktivitas: <Text style={{ fontFamily: FontFamily.number, color: Colors.primary }}>{user.totalAdsWatched}/350</Text> — Syarat untuk penarikan
+              Total aktivitas: <Text style={{ fontFamily: FontFamily.number, color: Colors.primary }}>{user.totalAdsWatched}/350</Text>
             </Text>
           </View>
         </Animated.View>
